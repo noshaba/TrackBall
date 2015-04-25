@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EBV Assignment 1", "EBV Assignment 1\EBV Assignment 1.vcxproj", "{74550E46-FD2E-48C4-BAFB-11E5F2AC7278}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{74550E46-FD2E-48C4-BAFB-11E5F2AC7278}.Debug|Win32.ActiveCfg = Debug|Win32
+		{74550E46-FD2E-48C4-BAFB-11E5F2AC7278}.Debug|Win32.Build.0 = Debug|Win32
+		{74550E46-FD2E-48C4-BAFB-11E5F2AC7278}.Release|Win32.ActiveCfg = Release|Win32
+		{74550E46-FD2E-48C4-BAFB-11E5F2AC7278}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
