@@ -60,8 +60,12 @@ void segmentImage(const char* filename){
 	// Do the computer vision computation
 	time1 = cv::getTickCount();
 	RegionSet decomposition;
-	int threshold = 80;
-	int minLength = 2;
+	printf("Enter a threshold for binarizing the image.\n");
+	int threshold;
+	std::cin >> threshold;
+	printf("Enter a minimum length for RLE.\n");
+	int minLength;
+	std::cin >> minLength;
 	decomposition.thresholdAndRLE(src, threshold, minLength);
 	decomposition.groupRegions();
 	std::vector<Region> region;

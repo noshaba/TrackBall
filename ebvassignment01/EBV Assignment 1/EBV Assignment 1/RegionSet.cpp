@@ -2,6 +2,23 @@
 
 void RegionSet::thresholdAndRLE(cv::Mat_<uchar>& image, uchar threshold, int minLength) {
 	//TODO: Implement (2P)
+	unsigned int length;
+	for (unsigned int i = 0; i < image.rows; ++i){
+		length = 0;
+		for (unsigned int j = 0; j < image.cols; ++j){
+			if (image(i, j) > threshold){
+				if (length >= minLength)
+					rle.push_back(Interval(j - length, j - 1, i));
+				image(i, j) = 255;
+				length = 0;
+			} else {
+				image(i, j) = 0;
+				++length;
+			}
+		}
+		if (length >= minLength)
+			rle.push_back(Interval(image.cols - length, image.cols - 1, i));
+	}
 }
 
 
