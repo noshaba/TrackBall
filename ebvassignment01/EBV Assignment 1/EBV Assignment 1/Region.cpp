@@ -23,7 +23,7 @@ void Region::eigenDecompositionSymmetric(const Matrix2x2& a, double& phi, double
 }
 
 void Region::computeMoments(std::vector<Region> &region, const RegionSet &decomposition) {
-	//TODO: Implement (2P)
+	// (2P)
 	std::vector<Interval> rle = decomposition.rle;
 	Interval I;
 
@@ -42,6 +42,7 @@ void Region::computeMoments(std::vector<Region> &region, const RegionSet &decomp
 }
 
 void Region::computeFeatures() {
+	// (2P)
 	double dIntegralXX, dIntegralXY, dIntegralYY, eig1, eig2, c, s;
 
 	centerX  = integralX / integral;
@@ -59,8 +60,8 @@ void Region::computeFeatures() {
 	eig1 = c * c * dIntegralXX + 2 * c * s * dIntegralXY + s * s * dIntegralYY;
 	eig2 = s * s * dIntegralXX - 2 * c * s * dIntegralXY + c * c * dIntegralYY;
 
-	largeLength = 2 * std::sqrt(eig1);
-	smallLength = 2 * std::sqrt(eig2);
+	largeLength = 2 * std::sqrt(eig1); // shouldn't that be called small length since it's shorter?
+	smallLength = 2 * std::sqrt(eig2); // and this large length?
 }
 
 
@@ -69,4 +70,16 @@ void Region::classify() {
 	// Use features computed to label the regions as Teller/Messer/Gabel/Loeffel
 	// This function is highly dependent on the concrete setting.
 	// It's okay to use fixed thresholds.
+	// std::cout << "Center point: " << centerX << ' ' << centerY << std::endl;
+	// std::cout << "main axis angle: " << mainAxis << std::endl;
+	// std::cout << "axis lengths: " << smallLength << ' ' << largeLength << std::endl << std::endl;
+
+	// actually should be "largeLength / smallLength"...
+	// but for some reason small length is bigger than large length with the formulas given in the lecture...
+	// maybe smallLength should be called longLength instead and vice versa?
+	
+	if (smallLength / largeLength <= 1.2 && integral >= 5000){
+		label = "Teller";
+		return;
+	}
 }

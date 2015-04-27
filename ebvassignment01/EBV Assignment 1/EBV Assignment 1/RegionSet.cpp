@@ -1,6 +1,7 @@
 #include "RegionSet.hpp"
 
 void RegionSet::thresholdAndRLE(cv::Mat_<uchar>& image, uchar threshold, int minLength) {
+	// (2P)
 	unsigned int length;
 	for (unsigned int i = 0; i < image.rows; ++i){
 		length = 0;
@@ -68,6 +69,7 @@ bool RegionSet::ahead(Interval* run, Interval* flw) {
 }
 
 void RegionSet::groupRegions() {
+	// (3P)
 	initialize();
 	std::vector<Interval>::iterator flw, run;
 	flw = run = rle.begin();
