@@ -42,9 +42,25 @@ void Region::computeMoments(std::vector<Region> &region, const RegionSet &decomp
 }
 
 void Region::computeFeatures() {
-	//TODO: Implement (2P)
-	centerX = integralX / integral;
-	centerY = integralY / integral;
+	double dIntegralXX, dIntegralXY, dIntegralYY, eig1, eig2, c, s;
+
+	centerX  = integralX / integral;
+	centerY  = integralY / integral;
+
+	dIntegralXX = integralXX / integral - centerX * centerX;
+	dIntegralXY = integralXY / integral - centerX * centerY;
+	dIntegralYY = integralYY / integral - centerY * centerY;
+
+	mainAxis = .5 * std::atan2(-2 * dIntegralXY, dIntegralYY - dIntegralXX);
+	
+	c = std::cos(mainAxis);
+	s = std::sin(mainAxis);
+
+	eig1 = c * c * dIntegralXX + 2 * c * s * dIntegralXY + s * s * dIntegralYY;
+	eig2 = s * s * dIntegralXX - 2 * c * s * dIntegralXY + c * c * dIntegralYY;
+
+	largeLength = 2 * std::sqrt(eig1);
+	smallLength = 2 * std::sqrt(eig2);
 }
 
 

@@ -32,12 +32,12 @@ void paintFeatures(cv::Mat& img, const std::vector<Region>& features) {
 		line(img,
 			cv::Point((int)(rg->centerX + rg->largeLength*c), (int)(rg->centerY + rg->largeLength*s)),
 			cv::Point((int)(rg->centerX - rg->largeLength*c), (int)(rg->centerY - rg->largeLength*s)),
-			CV_RGB(255, 255, 255), 10);
+			CV_RGB(255, 255, 255));
 		// paint +/-smallLength in direction (-s,c) orthogonal to (c,s) from the center of gravity
 		line(img,
 			cv::Point((int)(rg->centerX - rg->smallLength*s), (int)(rg->centerY + rg->smallLength*c)),
 			cv::Point((int)(rg->centerX + rg->smallLength*s), (int)(rg->centerY - rg->smallLength*c)),
-			CV_RGB(255, 255, 255), 10);
+			CV_RGB(255, 255, 255));
 		putText(img, rg->label, cv::Point((int)rg->centerX, (int)rg->centerY),
 			cv::FONT_HERSHEY_PLAIN, 2, CV_RGB(255, 255, 255));
 	}
