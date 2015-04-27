@@ -66,20 +66,33 @@ void Region::computeFeatures() {
 
 
 void Region::classify() {
-	//TODO: Implement (2P)
-	// Use features computed to label the regions as Teller/Messer/Gabel/Loeffel
-	// This function is highly dependent on the concrete setting.
-	// It's okay to use fixed thresholds.
-	// std::cout << "Center point: " << centerX << ' ' << centerY << std::endl;
-	// std::cout << "main axis angle: " << mainAxis << std::endl;
-	// std::cout << "axis lengths: " << smallLength << ' ' << largeLength << std::endl << std::endl;
+	// (2P)
 
 	// actually should be "largeLength / smallLength"...
 	// but for some reason small length is bigger than large length with the formulas given in the lecture...
 	// maybe smallLength should be called longLength instead and vice versa?
 	
-	if (smallLength / largeLength <= 1.2 && integral >= 5000){
-		label = "Teller";
-		return;
+	if (integral >= 5000){
+		int ratio = smallLength / largeLength;
+
+		switch (ratio) {
+		case 1:
+			label = "Plate";
+			break;
+		case 7:
+		case 8:
+			label = "Spoon";
+			break;
+		case 10:
+		case 11:
+			label = "Fork";
+			break;
+		case 14:
+		case 15:
+			label = "Knife";
+			break;
+		default:
+			break;
+		}
 	}
 }
