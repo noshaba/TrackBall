@@ -24,10 +24,27 @@ void Region::eigenDecompositionSymmetric(const Matrix2x2& a, double& phi, double
 
 void Region::computeMoments(std::vector<Region> &region, const RegionSet &decomposition) {
 	//TODO: Implement (2P)
+	std::vector<Interval> rle = decomposition.rle;
+	Interval I;
+
+	for (unsigned int i = 0; i < rle.size(); ++i){
+		I = rle[i];
+		if (region.size() == I.region){
+			region.push_back(Region());
+		}
+		region[I.region].integral   += I.xHi - I.xLo + 1;
+		region[I.region].integralX  += (I.xHi * (I.xHi + 1) - I.xLo * (I.xLo - 1)) * .5;
+		region[I.region].integralY  += (I.xHi - I.xLo + 1) * I.y;
+		region[I.region].integralXX += (std::pow(I.xHi + .5, 3) - std::pow(I.xLo - .5, 3)) / 3.0;
+		region[I.region].integralXY += (I.xHi * (I.xHi + 1) - I.xLo * (I.xLo - 1)) * I.y * .5;
+		region[I.region].integralYY += (I.xHi - I.xLo + 1) * (I.y * I.y + 1.0 / 12.0);
+	}
 }
 
 void Region::computeFeatures() {
 	//TODO: Implement (2P)
+	centerX = integralX / integral;
+	centerY = integralY / integral;
 }
 
 

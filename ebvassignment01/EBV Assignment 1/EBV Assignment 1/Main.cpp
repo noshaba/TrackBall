@@ -16,7 +16,6 @@ void paintDecomposition(cv::Mat& img, const RegionSet& decomposition) {
 		line(img, cv::Point(decomposition.rle[i].xLo, decomposition.rle[i].y),
 			cv::Point(decomposition.rle[i].xHi, decomposition.rle[i].y),
 			color[decomposition.rle[i].region % 6]);
-			//CV_RGB(decomposition.rle[i].region, 0, 0));
 	}
 }
 
@@ -33,12 +32,12 @@ void paintFeatures(cv::Mat& img, const std::vector<Region>& features) {
 		line(img,
 			cv::Point((int)(rg->centerX + rg->largeLength*c), (int)(rg->centerY + rg->largeLength*s)),
 			cv::Point((int)(rg->centerX - rg->largeLength*c), (int)(rg->centerY - rg->largeLength*s)),
-			CV_RGB(255, 255, 255));
+			CV_RGB(255, 255, 255), 10);
 		// paint +/-smallLength in direction (-s,c) orthogonal to (c,s) from the center of gravity
 		line(img,
 			cv::Point((int)(rg->centerX - rg->smallLength*s), (int)(rg->centerY + rg->smallLength*c)),
 			cv::Point((int)(rg->centerX + rg->smallLength*s), (int)(rg->centerY - rg->smallLength*c)),
-			CV_RGB(255, 255, 255));
+			CV_RGB(255, 255, 255), 10);
 		putText(img, rg->label, cv::Point((int)rg->centerX, (int)rg->centerY),
 			cv::FONT_HERSHEY_PLAIN, 2, CV_RGB(255, 255, 255));
 	}

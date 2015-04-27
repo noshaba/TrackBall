@@ -40,7 +40,7 @@ void RegionSet::unite(Interval* iv1, Interval* iv2) {
 
 void RegionSet::initialize() {
 	std::vector<Interval>::iterator it;
-	for (it = rle.begin(); it != rle.end(); it++) (*it).parent = &(*it);
+	for (it = rle.begin(); it != rle.end(); it++) it->parent = &(*it);
 }
 
 
