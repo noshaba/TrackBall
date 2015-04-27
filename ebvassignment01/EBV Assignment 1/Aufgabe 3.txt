@@ -1,0 +1,9 @@
+Es wäre besser die zu den Regionen gehörenden Intervalle mit in die Regionsklasse zu geben, damit man aus ihnen die orientierten Bounding Boxen berechnen kann, um anhand dieser das Verhältnis von Schwerpunkt zu den jeweligen Rändern zu ermitteln.
+
+So könnte man beispielsweise einen Löffel bzw. eine Gabel viel besser von einem Messer unterscheiden, da bei einem Messer der Schwerpunkt eher in der Mitte der Bounding Box liegen würde als bei Löffel und Gabel.
+
+Die Unterscheidung von Löffel und Gabel könnte man dann anhand des Hinausragens der längeren Trägheitsachse aus der orientierten Bounding Box machen. Beide Gegenstände gehen oben in die breite nur bleibt es bei der Gabel breit, während beim Löffel die Breite abrupt abrundet, weshalb die lägere Trägheitsachse beim Löffel oben viel weiter aus der Bounding Box hinausragt als unten - anders als bei der Gabel, wo die Trägheitsachse in beide Richtungen ähnlich hinausragt.
+
+"Oben" ist hier die kurze Seite der Bounding Box, die näher am Schwerpunkt ist.
+
+Die Unterscheidung zwischen Teller (rund) und länglichen Gegenständen (Messer, Gabel, Löffel) würde man natürlich weiterhin über einen Schwellwert auf das Verhältnis der beiden Hauptträgheitsachsen machen.
