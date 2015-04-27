@@ -1,4 +1,4 @@
-#include "Region.hpp"
+#include "include/Region.hpp"
 
 //************ GUI
 
@@ -43,11 +43,11 @@ void paintFeatures(cv::Mat& img, const std::vector<Region>& features) {
 	}
 }
 
-void segmentImage(const char* filename){
+void segmentImage(std::string filename){
 	// Load the source image as a grayscale image for processing
-	cv::Mat_<uchar> src = cv::imread(filename, 0); // 0 means load as grayscale
+	cv::Mat_<uchar> src = cv::imread(filename.c_str(), 0); // 0 means load as grayscale
 	// Load the same image as a color image for displaying and painting onto
-	cv::Mat dst = cv::imread(filename, 1); // 1 means load as color (for displaying)
+	cv::Mat dst = cv::imread(filename.c_str(), 1); // 1 means load as color (for displaying)
 
 	if (!src.data) {
 		printf("Image could not be loaded.\n");
@@ -86,7 +86,7 @@ void segmentImage(const char* filename){
 
 	// show as a window in the GUI
 	cv::imshow("Segmented Image", dst);
-	cv::imwrite("result.png", dst);   // save the segmented and labeled result
+	cv::imwrite((filename + "_result.png").c_str(), dst);   // save the segmented and labeled result
 
 	printf("Click on the image and hit 'enter' to load another picture.\n");
 	int key = cv::waitKey(0);
@@ -105,7 +105,7 @@ int main() {
 		std::cout << "Enter the file name of the image or enter 'q' to quit." << std::endl;
 		std::cin >> input;
 		if (input != "q")
-			segmentImage(input.c_str());
+			segmentImage(("images/"+input));
 		else
 			break;
 	}

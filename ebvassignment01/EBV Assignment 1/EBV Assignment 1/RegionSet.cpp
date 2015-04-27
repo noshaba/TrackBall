@@ -1,4 +1,4 @@
-#include "RegionSet.hpp"
+#include "include/RegionSet.hpp"
 
 void RegionSet::thresholdAndRLE(cv::Mat_<uchar>& image, uchar threshold, int minLength) {
 	// (2P)
