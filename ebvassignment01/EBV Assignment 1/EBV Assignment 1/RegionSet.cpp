@@ -1,7 +1,6 @@
 #include "RegionSet.hpp"
 
 void RegionSet::thresholdAndRLE(cv::Mat_<uchar>& image, uchar threshold, int minLength) {
-	//TODO: Implement (2P)
 	unsigned int length;
 	for (unsigned int i = 0; i < image.rows; ++i){
 		length = 0;
@@ -23,34 +22,59 @@ void RegionSet::thresholdAndRLE(cv::Mat_<uchar>& image, uchar threshold, int min
 
 
 void RegionSet::pathCompress(Interval* iv) {
-	// TODO: Implement
+	Interval *root, *buffer;
+	root = iv;
+	while (root->parent != root) root = root->parent;
+	while (iv != root) {
+		buffer = iv->parent;
+		iv->parent = root;
+		iv = buffer;
+	}
 }
 
 void RegionSet::unite(Interval* iv1, Interval* iv2) {
-	// TODO: Implement
+	pathCompress (iv1); pathCompress (iv2);
+	iv1->parent < iv2->parent ? iv2->parent->parent = iv1->parent : iv1->parent->parent = iv2->parent;
 }
 
 
 void RegionSet::initialize() {
-	//TODO: Implement 
+	std::vector<Interval>::iterator it;
+	for (it = rle.begin(); it != rle.end(); it++) (*it).parent = &(*it);
 }
 
 
 void RegionSet::setRegionIndex() {
-	// TODO: Implement
+	std::vector<Interval>::iterator iv;
+	iv = rle.begin();
+	int regionCtr = 0;
+	while (iv != rle.end()) {
+		if (iv->parent == &(*iv)) {
+			iv->region = regionCtr;
+			regionCtr++;
+		}
+		else iv->region = iv->parent->region;
+		iv++;
+	}
 }
 
 
 bool RegionSet::touch(Interval* run, Interval* flw) {
-	// TODO: Implement
-	return false;
+	return run->y == flw->y + 1 && run->xHi >= flw->xLo && flw->xHi >= run->xLo;
 }
 
 bool RegionSet::ahead(Interval* run, Interval* flw) {
-	// TODO: Implement
-	return false;
+	return (run->y > flw->y + 1) || (run->y == flw->y + 1 && run->xHi > flw->xHi);
 }
 
 void RegionSet::groupRegions() {
-	// TODO: Implement (3p with functions from pathCompress to setRegionIndex)
+	initialize();
+	std::vector<Interval>::iterator flw, run;
+	flw = run = rle.begin();
+	while (run != rle.end()) {
+		if (touch(&(*run), &(*flw))) unite(&(*run), &(*flw));
+		if (ahead(&(*run), &(*flw))) flw++;
+		else run++;
+	}
+	setRegionIndex();
 }

@@ -4,7 +4,7 @@
 #include "Interval.hpp"
 #include "Precompiled.hpp"
 
-	//! An black an white image decomposed into horizontal Intervals
+	//! A black and white image decomposed into horizontal Intervals
 	/*! Each interval belongs to a certain region.
 	*/
 	class RegionSet {

@@ -16,6 +16,7 @@ void paintDecomposition(cv::Mat& img, const RegionSet& decomposition) {
 		line(img, cv::Point(decomposition.rle[i].xLo, decomposition.rle[i].y),
 			cv::Point(decomposition.rle[i].xHi, decomposition.rle[i].y),
 			color[decomposition.rle[i].region % 6]);
+			//CV_RGB(decomposition.rle[i].region, 0, 0));
 	}
 }
 
@@ -86,11 +87,11 @@ void segmentImage(const char* filename){
 
 	// show as a window in the GUI
 	cv::imshow("Segmented Image", dst);
+	cv::imwrite("result.png", dst);   // save the segmented and labeled result
 
 	printf("Click on the image and hit 'enter' to load another picture.\n");
 	int key = cv::waitKey(0);
 
-	// cv::imwrite ("result.png", dst);   // save the segmented and labeled result
 	if (key == '\n')
 		return;
 }
