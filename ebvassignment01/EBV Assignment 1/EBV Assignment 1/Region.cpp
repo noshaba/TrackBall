@@ -54,20 +54,14 @@ void Region::computeFeatures() {
 
 	eigenDecompositionSymmetric({ { dIntegralXX, dIntegralXY }, { dIntegralXY, dIntegralYY } }, mainAxis, eig1, eig2);
 
-	largeLength = 2 * std::sqrt(eig1); // shouldn't that be called small length since it's shorter?
-	smallLength = 2 * std::sqrt(eig2); // and this large length?
+	largeLength = 2 * std::sqrt(eig1);
+	smallLength = 2 * std::sqrt(eig2);
 }
 
 
 void Region::classify() {
-	// (2P)
-
-	// actually should be "largeLength / smallLength"...
-	// but for some reason small length is bigger than large length with the formulas given in the lecture...
-	// maybe smallLength should be called longLength instead and vice versa?
-	
 	if (integral >= 5000){
-		int ratio = smallLength / largeLength;
+		int ratio = largeLength / smallLength;
 
 		switch (ratio) {
 		case 1:
