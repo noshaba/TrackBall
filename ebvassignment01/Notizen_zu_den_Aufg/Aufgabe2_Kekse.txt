@@ -1,0 +1,51 @@
+Audgabe 2) 
+
+Alte Ansätze (Funktionieren nicht so gut)
+----------------------------------------------------------------------------------------------------------------------------
+Aufbau:
+Kamera zeigt von oben senkrecht auf die Kekse
+Weißer Hintergrund
+Beleuchtung: Soft-Box (Flächenlicht)
+
+EBV: 	
+1. Schwellenwert einstellen, sodass die Kekse auf weißen Hintergrund schwarz dargestellt sind.
+	1.2. Grobe Aussortierung -> Maske eines fehlerfreien Keksen über alle Kekse legen. Bei keiner Übereinstimmung wird der Keks aussortiert. (Form kontrollieren)
+	     Abgebrochene Ecken, Zähne und Verformungen können dadurch identifiziert werden. 
+	     Die Prägung innerhalb des Kekses muss zusätzlich anschließend durch ein anderes Verfahren kontrolliert werden.	
+	
+Aufbau:
+Objekt befindet sich zwischen Lichtquelle und Kamera (Beleuchtung im Durchlicht)
+Weißer Hintergrund
+
+EBV:
+2. Durchlichtaufnahme kann gut dafür verwendet werden um die Anzahl sowie Lage der Löcher zu identifizieren.
+   Bei der Durchlichtaufnahme ebenfalls einen Schwellwert einstellen (Binäraufnahme). Es kann wie bei 1. eine Maske über alle Kekse gelegt werden (Hierbei wird Punkt 1. überflüssig).
+   ODER Abstände der einzelen Löcher zueinander ermitteln ODER Anzahl der Löcher ermittelt werden.
+	
+
+Aufbau:
+Wie bei Punkt 1.
+3. Die Leibniz-Prägung kann kontrolliert werden, indem zunächst ein Grauwertbild aufgenommen wird. Anschließend kann eine Kantenerkennung erfolgen, z.B mit Hilfe des Laplace-Operators.
+   Die Richtigkeit der Prägung wird anhand von Referenzbildern kontrolliert.
+
+Einbindung in den Produktionsprozess.
+Die fertig gebackenen Kekse sollen der Reihe nach auf ein Fließband kontrolliert werden (Die Ausrichtung der Kekse ist hierbei festgelegt). Es können mehrere Fließbände parallel laufen. Jedoch 
+benötigt jedes Fließband eine Kamera zur Fehleridentifizierung.
+
+Fließband 1: [] [] [] [] [] [] Kamera 1 [] [] [] [] [] []
+Fließband 2: [] [] [] [] [] [] Kamera 2 [] [] [] [] [] []
+____________________________________________________________________________________________________________________________
+
+
+Neue Ansätze
+----------------------------------------------------------------------------------------------------------------------------
+(Simons Ansatz)
+Fläche sowie Schwerpunkt ermitteln und mit einem Referenzwert vergleichen.
+
+(Franks Ansatz)
+Farbübergänge bei den einzelen Zähnen identifizieren.
+
+(Mein neuer Ansatz)
+Bounding-Box um den Keks legen. Die Zähne berühren im Normalfall die Bounding-Box in gleichmäßigen Abständen (Außer die Ecken: Diese müssen als Sonderfall betrachtet werden).
+Demnach kann der Abstand zwischen den Berührungen mit der Bounding-Box ermittelt werden. Wenn dieser Wert vom Referenzwert abweicht, kann davon ausgegangen werden, dass 
+ein Zahn oder eine Ecke abgebrochen ist. Mit diesem Verfahren lässt sich zudem die Anzahl der Zähne ermitteln.

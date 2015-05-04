@@ -1,0 +1,19 @@
+Aufgabe 3.)
+
+Meine Überlegungen
+-----------------------------------------------------------------------------------------------------------------------------
+Klassifizierung über Merkmale:
+1. Über die Fläche: Tellerfläche unterscheidet sich zu der Gabel-, Löffel- und Messerfläche
+2. Über den Schwerpunkt: Verhältnis der Haupträgheitsachsen bestimmen
+3. Über die Länge/ Breite in Hauptträgheitsrichtung: Verhältnis ausrechnen.
+-----------------------------------------------------------------------------------------------------------------------------
+
+
+Überlegungen der Gruppe
+-----------------------------------------------------------------------------------------------------------------------------
+Verhältnis über die Haupträgheitsachsen
+
+- Klassifizierung über das Verhältnis der Haupträgheitsachsen
+- Aufgrund der recht länglichen Messer-Form, wird die Ellipse beim Messer in die Länge gezogen.
+  Der Löffel hat hingegen einen dicken Kopf, wodurch die Ellipse weiter in die Breite gezogen wird.
+  Demzufolge lassen sich die einzelnen Objekte durch das Verhältnis der Haupträgheitsachsen unterscheiden (siehe. Bild).
