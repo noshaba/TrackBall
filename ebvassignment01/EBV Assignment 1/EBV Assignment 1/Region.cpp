@@ -52,7 +52,7 @@ void Region::computeFeatures() {
 	dIntegralXY = integralXY / integral - centerX * centerY;
 	dIntegralYY = integralYY / integral - centerY * centerY;
 
-	eigenDecompositionSymmetric({ { dIntegralXX, 0 }, { dIntegralXY, dIntegralYY } }, mainAxis, eig1, eig2);
+	eigenDecompositionSymmetric({ { dIntegralXX, dIntegralXY }, { dIntegralXY, dIntegralYY } }, mainAxis, eig1, eig2);
 
 	largeLength = 2 * std::sqrt(eig1); // shouldn't that be called small length since it's shorter?
 	smallLength = 2 * std::sqrt(eig2); // and this large length?
