@@ -43,7 +43,7 @@ void Region::computeMoments(std::vector<Region> &region, const RegionSet &decomp
 
 void Region::computeFeatures() {
 	// (2P)
-	double dIntegralXX, dIntegralXY, dIntegralYY, eig1, eig2, c, s;
+	double dIntegralXX, dIntegralXY, dIntegralYY, eig1, eig2;
 
 	centerX  = integralX / integral;
 	centerY  = integralY / integral;
@@ -52,13 +52,7 @@ void Region::computeFeatures() {
 	dIntegralXY = integralXY / integral - centerX * centerY;
 	dIntegralYY = integralYY / integral - centerY * centerY;
 
-	mainAxis = .5 * std::atan2(-2 * dIntegralXY, dIntegralYY - dIntegralXX);
-	
-	c = std::cos(mainAxis);
-	s = std::sin(mainAxis);
-
-	eig1 = c * c * dIntegralXX + 2 * c * s * dIntegralXY + s * s * dIntegralYY;
-	eig2 = s * s * dIntegralXX - 2 * c * s * dIntegralXY + c * c * dIntegralYY;
+	eigenDecompositionSymmetric({ { dIntegralXX, 0 }, { dIntegralXY, dIntegralYY } }, mainAxis, eig1, eig2);
 
 	largeLength = 2 * std::sqrt(eig1); // shouldn't that be called small length since it's shorter?
 	smallLength = 2 * std::sqrt(eig2); // and this large length?

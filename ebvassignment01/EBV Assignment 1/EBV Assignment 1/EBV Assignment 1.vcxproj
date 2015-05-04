@@ -84,12 +84,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Interval.hpp" />
-    <ClInclude Include="Precompiled.hpp" />
-    <ClInclude Include="Region.hpp" />
-    <ClInclude Include="RegionSet.hpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Region.cpp" />
     <ClCompile Include="RegionSet.cpp" />
@@ -101,6 +95,12 @@
     <Image Include="gedeck4.jpg" />
     <Image Include="gedeck5.jpg" />
     <Image Include="gedeck6.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Interval.hpp" />
+    <ClInclude Include="include\Precompiled.hpp" />
+    <ClInclude Include="include\Region.hpp" />
+    <ClInclude Include="include\RegionSet.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
