@@ -7,6 +7,8 @@
 *.sln.docstates
 *.opensdf
 *.sdf
+*.aux
+*.out
 
 # Build results
 
