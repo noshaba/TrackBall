@@ -1,6 +1,11 @@
 \documentclass{ezb}
 \usepackage[]{todonotes}
 \usepackage{longtable}
+\usepackage[colorlinks,        	% Links ohne Umrandungen in zu wählender Farbe
+   linkcolor=black,   			% Farbe interner Verweise
+   filecolor=black,   			% Farbe externer Verweise
+   citecolor=black    			% Farbe von Zitaten
+]{hyperref}
 \usepackage{booktabs}
 
 \renewcommand{\thesubsection}{\alph{subsection}}
@@ -37,18 +42,20 @@ Wenn anschließend die Aufnahme bereit zum Vergleich ist, sollen die Pixelwerte 
 \end{equation}
 \textbf{R} $\widehat{=}$ resultierende Bildmatrix, \textbf{K} $\widehat{=}$ Bildmatrix vom Kontrollbild, \textbf{M} $\widehat{=}$ Bildmatrix vom Musterbild. \\
 \newline
-Wenn nach dieser Variante ein Pixelwert von \textbf{M} größer als der korrespondierende aus \textbf{K} ist, so erhält \textbf{R} einen negativen Wert für diese Stelle. Solche Werte (also $\leq$ 0) können dann auf 0 gesetzt werden. Dies würde aber einen Informationsverlust bedeuten. Stattdessen bleibt die Information erhalten, wenn nach der Subtraktion noch der Betrag gebildet wird:
+Wenn nach dieser Variante ein Pixelwert aus \textbf{M} größer als der korrespondierende aus \textbf{K} ist, so erhält \textbf{R} einen negativen Wert für diese Stelle. Solche Werte (also $\leq$ 0) können dann auf 0 gesetzt werden. Dies würde aber einen Informationsverlust bedeuten. Stattdessen bleibt die Information erhalten, wenn nach der Subtraktion noch der Betrag gebildet wird:
 \begin{equation}
 \textbf{R} = \vert \textbf{K} - \textbf{M} \vert 
 \end{equation}
-Je nach Anforderung kann hier weiter nach Qualitätsstufen unterteilt werden, in z.B.: fehlende Zähne oder Teig, der beim Backen übergelaufen ist. Hierfür müssen dann weitere Klassifizierungsalgorithmen auf \textbf{R} angewendet werden. Üblicherweise soll aber jeder Keks mit irgendeinem Fehler aussortiert werden. Dafür bietet sich ein einfacheres Verfahren an: der Keks soll aussortiert werden, wenn ein bestimmter Helligkeitswert überschritten worden ist, oder wenn dieser Wert eine bestimmte Anzahl überschritten hat (mit Hilfe einer Histogrammanalyse).\\ \newline
+Je nach Anforderung kann hier weiter nach Qualitätsstufen unterteilt werden, in z.B.: fehlende Zähne oder Teig, der beim Backen übergelaufen ist. Hierfür müssen dann weitere Klassifizierungsalgorithmen auf \textbf{R} angewendet werden. Üblicherweise soll aber jeder Keks mit irgendeinem Fehler aussortiert werden. Dafür bietet sich ein einfacheres Verfahren an: der Keks soll aussortiert werden, wenn ein bestimmter Helligkeitswert überschritten worden ist, oder wenn dieser Wert eine bestimmte Anzahl überschritten wurde (mit Hilfe einer Histogrammanalyse).\\ \newline
 \textbf{{\large Kamera und Umgebung}}\\
 \newline
-Für das zuvor beschriebene Verfahren sollte eine möglichst zweidimensionale Bildaufnahme vom Keks gemacht werden, wo keine Seitenansichten oder Schattenwürfe vorhanden sind, da bei einer seitlichen Aufnahme zu viele Differenzen bestehen würden. Die beste Kameraposition hierfür ist direkt über dem Mittelpunkt des Gebäcks. Zudem können die meisten Fehler bei der Draufsicht erkannt werden. Die abzufotografierende Fläche muss beleuchtet werden, um den kompletten Keks analysieren zu können. Die Lichtquelle selbst sollte möglichst nah bei der Kamera platziert werden, um einen Schattenwurf zu vermeiden (ggf. mehrere Lichtquellen oder ein Flächenlicht verwenden). \\ 
+Für das zuvor beschriebene Verfahren sollte eine möglichst zweidimensionale Bildaufnahme vom Keks gemacht werden, wo keine Seitenansichten oder Schattenwürfe vorhanden sind, da bei einer seitlichen Aufnahme zu viele unbrauchbare Differenzen entstehen würden (falscher Vergleich der Bereiche im Kontroll- und Musterbild).\\
+\newline
+Die bevorzugte Kameraposition hierfür ist dann direkt über dem Flächenmittelpunkt des Gebäcks, mit  Blickrichtung auf die obere (und damit größte) Fläche der Ware. Die abzufotografierende Fläche muss beleuchtet werden, um den kompletten Keks analysieren zu können. Die Lichtquelle selbst sollte möglichst nah bei der Kamera platziert werden, um einen Schattenwurf zu vermeiden (ggf. mehrere Lichtquellen oder ein Flächenlicht verwenden). \\ 
 \newline
 \textbf{{\large Integration in den Fertigungsprozess}}\\
 \newline
-Die Kekse werden nacheinander, im Abstand von einer Aufnahmebreite (sodass nur ein Gebäck pro Foto aufgenommen und analysiert wird), mit Hilfe eines Förderbands an der Kamera vorbeigefahren. Um die Bildverarbeitungszeit gering zu halten, kann ein zusätzlicher Sensor (z.B.: Lichtschranke in Richtung der Gebäckkante) die Fotoaufnahme auslösen, wenn der Keks komplett im Bildbereich liegt. Dadurch muss nicht erst überprüft werden, ob das Gebäck komplett oder nur teilweise auf der Aufnahme zu sehen ist. Dieser Sensor kann ebenso zur Synchronisation verwendet werden, indem er die Warenauflage auf das Förderband auslöst. Fehlerbehaftete Kekse können letztlich mit Hilfe von pneumatischen Modulen vom Band geschoben werden.
+Die Kekse werden nacheinander, im Abstand von einer Aufnahmebreite (sodass nur ein Gebäck pro Foto aufgenommen und analysiert wird), mit Hilfe eines Förderbands an der Kamera vorbeigefahren. Um die Bildverarbeitungszeit gering zu halten, kann ein zusätzlicher Sensor (z.B.: Lichtschranke in Richtung der Gebäckkante) die Fotoaufnahme auslösen, wenn der Keks vollständig im Bildbereich liegt. Dadurch muss der Algorithmus nicht überprüfen, ob das Gebäck komplett oder nur teilweise auf der Aufnahme zu sehen ist und spart dadurch Rechenzeit. Dieser Sensor kann ebenso zur Synchronisation verwendet werden, indem er die Warenauflage auf das Förderband auslöst. Fehlerbehaftete Kekse können letztlich mit Hilfe von pneumatischen Schubzylinder vom Band geschoben werden.
 \newpage
 \section{Teller sind ein weites Feld (2 Bonuspunkte)}
 
