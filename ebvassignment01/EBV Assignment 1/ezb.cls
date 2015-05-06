@@ -15,7 +15,6 @@
 \usepackage{xcolor}
 \usepackage{fancyhdr}
 \usepackage{listings}
-\usepackage{hyperref}
 
 % -----------------------------------------------------------------------
 % Page layout
