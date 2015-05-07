@@ -18,6 +18,200 @@
 %-------Text-Start------------------------------------------
 \section{Wer hat mein Tellerchen verrückt? (10 Punkte)}
 
+\begin{lstlisting}[language=C++, caption=Binarizes and run length codes image]
+void RegionSet::thresholdAndRLE (Mat_<uchar>& image, uchar threshold, int minLength)
+{
+	// (2P)
+	unsigned int length;
+	for (unsigned int i = 0; i < image.rows; ++i)
+	{
+		length = 0;
+		for (unsigned int j = 0; j < image.cols; ++j)
+		{
+			if (image(i, j) > threshold)
+			{
+				if (length >= minLength)
+					rle.push_back(Interval(j - length, j - 1, i));
+			
+				image(i, j) = 255;
+				length = 0;
+			}
+			else
+			{
+				image(i, j) = 0;
+				++length;
+			}
+		}
+		
+	if (length >= minLength)
+		rle.push_back(Interval(image.cols - length, image.cols - 1, i));
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=C++, caption=Auxiliary routine for unite]
+void RegionSet::pathCompress (Interval* iv)
+{
+	Interval *root, *buffer;
+	root = iv;
+	while (root->parent != root)
+		root = root->parent;
+		
+	while (iv != root)
+	{
+		buffer = iv->parent;
+		iv->parent = root;
+		iv = buffer;
+	}
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=C++, caption=Auxiliary routine for group regions]
+void RegionSet::unite (Interval* iv1, Interval* iv2)
+{
+	pathCompress(iv1);
+	pathCompress(iv2);
+	iv1->parent < iv2->parent ? iv2->parent->parent = iv1->parent : iv1->parent->parent = iv2->parent;
+}
+\end{lstlisting}
+
+
+\begin{lstlisting}[language=C++, caption=Auxiliary routine for group regions]
+void RegionSet::initialize ()
+{
+	std::vector<Interval>::iterator it;
+	for (it = rle.begin(); it != rle.end(); it++)
+		it->parent = &(*it);
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=C++, caption=Auxiliary routine for group regions]
+void RegionSet::setRegionIndex ()
+{
+	std::vector<Interval>::iterator iv;
+	iv = rle.begin();
+	int regionCtr = 0;
+	while (iv != rle.end())
+	{
+		if (iv->parent == &(*iv))
+		{
+			iv->region = regionCtr;
+			regionCtr++;
+		}
+		else
+			iv->region = iv->parent->region;
+		iv++;
+	}
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=C++, caption=Auxiliary routine for group regions]
+bool RegionSet::touch (Interval* run, Interval* flw)
+{
+	return run->y == flw->y + 1 && run->xHi >= flw->xLo && flw->xHi >= run->xLo;
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=C++, caption=Auxiliary routine for group regions]
+bool RegionSet::ahead (Interval* run, Interval* flw) 
+{
+	return (run->y > flw->y + 1) || (run->y == flw->y + 1 && run->xHi > flw->xHi);
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=C++, caption=Finds connected regions in the rle intervals]
+void RegionSet::groupRegions ()
+{
+	// (3P with functions from pathCompress to setRegionIndex)
+	initialize();
+	std::vector<Interval>::iterator flw, run;
+	flw = run = rle.begin();
+	while (run != rle.end())
+	{
+		if (touch(&(*run), &(*flw)))
+			unite(&(*run), &(*flw));
+		if (ahead(&(*run), &(*flw)))
+			flw++;
+		else
+			run++;
+	}
+	setRegionIndex();
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=C++, caption=Auxiliary routine for group regions]
+void Region::computeMoments (vector<Region> &region, const RegionSet &decomposition)
+{
+	// (2P)
+	std::vector<Interval> rle = decomposition.rle;
+	Interval I;
+	
+	for (unsigned int i = 0; i < rle.size(); ++i)
+	{
+		I = rle[i];
+		if (region.size() == I.region)
+		{
+			region.push_back(Region());
+		}
+		region[I.region].integral += I.xHi - I.xLo + 1;
+		region[I.region].integralX += (I.xHi * (I.xHi + 1) - I.xLo * (I.xLo - 1)) * .5;
+		region[I.region].integralY += (I.xHi - I.xLo + 1) * I.y;
+		region[I.region].integralXX += (std::pow(I.xHi + .5, 3) - std::pow(I.xLo - .5, 3)) / 3.0;
+		region[I.region].integralXY += (I.xHi * (I.xHi + 1) - I.xLo * (I.xLo - 1)) * I.y * .5;
+		region[I.region].integralYY += (I.xHi - I.xLo + 1) * (I.y * I.y + 1.0 / 12.0);
+	}
+}
+\end{lstlisting}
+\newpage
+\begin{lstlisting}[language=C++, caption=Compute center and inertial axes from the second order moments]
+void Region::computeFeatures()
+{
+	double dIntegralXX, dIntegralXY, dIntegralYY, eig1, eig2;
+
+	centerX = integralX / integral;
+	centerY = integralY / integral;
+
+	dIntegralXX = integralXX / integral - centerX * centerX;
+	dIntegralXY = integralXY / integral - centerX * centerY;
+	dIntegralYY = integralYY / integral - centerY * centerY;
+
+	eigenDecompositionSymmetric( { {dIntegralXX, dIntegralXY}, {dIntegralXY, dIntegralYY} }, mainAxis, eig1, eig2);
+
+	largeLength = 2 * std::sqrt(eig1);
+	smallLength = 2 * std::sqrt(eig2);
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=C++, caption=Determine label from area and inertial axes]
+void Region::classify()
+{
+	if (integral >= 5000)
+	{
+		int ratio = largeLength / smallLength;
+
+		switch (ratio)
+		{
+			case 1:
+				label = "Plate";
+				break;
+			case 7:
+			case 8:
+				label = "Spoon";
+				break;
+			case 10:
+			case 11:
+				label = "Fork";
+				break;
+			case 14:
+			case 15:
+				label = "Knife";
+				break;
+			default:
+				break;
+		}
+	}
+}
+\end{lstlisting}
+
 \newpage
 \section{Kekse (4 Punkte)}
 Mit der Hilfe der Bildverarbeitung soll eine optische Qualitätskontrolle von einem Butterkeks durchgeführt werden, damit dem Kunden keine Ware mit fehlenden Zähnen oder anderen Verunstaltungen ausgeliefert wird. Abb. \ref{fig:keks_original} zeigt ein Beispiel von einem fehlerfreien Keks, wie es der Konsument erhalten soll.
