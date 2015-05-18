@@ -41,9 +41,9 @@ void sobel (Mat_<ushort>& dstImg, const Mat_<uchar>& srcImg)
     
     assert (dstImg.size()==srcImg.size());
 
-/*	for (int y2 = 0; y2 < dstImg.rows; y2++)
+	for (int y2 = 0; y2 < dstImg.rows; y2++)
 		for (int x2 = 0; x2 < dstImg.cols; x2++)
-			sobel1Px(dstImg, srcImg, x2, y2);*/
+			sobel1Px(dstImg, srcImg, x2, y2);
 }
 
 
