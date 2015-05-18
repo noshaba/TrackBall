@@ -22,16 +22,14 @@ void sobel1Px (Mat_<ushort>& dstImg, const Mat_<uchar>& srcImg, int x2, int y2)
 	bool inside = x2 - 1 >= 0 && x2 + 1 < srcImg.cols && y2 - 1 >= 0 && y2 + 1 < srcImg.rows;
 
 	sX = inside ?
-		(-srcImg(y2 - 1, x2 - 1) - 2 * srcImg(y2 - 1, x2) - srcImg(y2 - 1, x2 + 1)
-		+ srcImg(y2 + 1, x2 - 1) - 2 * srcImg(y2 + 1, x2) - srcImg(y2 + 1, x2 + 1))/8 : 0;
+		(-srcImg(y2 - 1, x2 - 1) - 2 * srcImg(y2, x2 - 1) - srcImg(y2 + 1, x2 - 1)
+		+ srcImg(y2 - 1, x2 + 1) + 2 * srcImg(y2, x2 + 1) + srcImg(y2 + 1, x2 + 1)) / 8 : sobel0;
 
 	sY = inside ?
-		(-srcImg(y2 - 1, x2 - 1) - 2 * srcImg(y2, x2 - 1) - srcImg(y2 + 1, x2 - 1)
-		+ srcImg(y2 - 1, x2 + 1) - 2 * srcImg(y2, x2 + 1) - srcImg(y2 + 1, x2 + 1))/8 : 0;
+		(-srcImg(y2 - 1, x2 - 1) - 2 * srcImg(y2 - 1, x2) - srcImg(y2 - 1, x2 + 1)
+		+ srcImg(y2 + 1, x2 - 1) + 2 * srcImg(y2 + 1, x2) + srcImg(y2 + 1, x2 + 1)) / 8 : sobel0;
 
-	// dstImg(y2, x2) = sobelCode(sX, sY);
-	dstImg(y2, x2) = sqrt(sX * sX + sY * sY);
-
+	dstImg(y2, x2) = sobelCode(sY, sX);
 }
 
 
