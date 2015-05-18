@@ -31,7 +31,7 @@ void sobel1Px (Mat_<ushort>& dstImg, const Mat_<uchar>& srcImg, int x2, int y2)
 		(srcImg(y2 - 1, x2 - 1) + 2 * srcImg(y2 - 1, x2) + srcImg(y2 - 1, x2 + 1)
 		- srcImg(y2 + 1, x2 - 1) - 2 * srcImg(y2 + 1, x2) - srcImg(y2 + 1, x2 + 1)) * 0.125f) : sobel0;
 
-	dstImg(y2, x2) = sobelCode(sX,0);
+	dstImg(y2, x2) = sobelCode(sX,sY);
 }
 
 
