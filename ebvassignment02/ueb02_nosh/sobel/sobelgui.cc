@@ -141,7 +141,7 @@ void detectEdges (const std::vector<std::string>& images, bool doSave)
         imshow ("Tracking a flying ball", overlayImg);
         while ((cvWaitKey (0) & 0xffff)!=' ');
         
-        paintSobelImg (sobelImgDisplay, sobelImg1);
+        paintSobelImg (sobelImgDisplay, sobelImg2);
         imshow ("Tracking a flying ball", sobelImgDisplay);
         while ((cvWaitKey (0) & 0xffff)!=' ');
         

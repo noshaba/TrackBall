@@ -13,23 +13,17 @@ int sobelRound (float x) {
 
 void sobel1Px (Mat_<ushort>& dstImg, const Mat_<uchar>& srcImg, int x2, int y2)
 {
-    // TODO: Implement (3P with sobel)
-    // Check with testCoreRoutines that everything is correct.
-    // No need to optimize here (this will be done in sobelFast)
-    // Use sobelRound for rounding to give exact the same result
-    // we have in the optimized routines.
-	int sX, sY;
 	bool inside = x2 - 1 >= 0 && x2 + 1 < srcImg.cols && y2 - 1 >= 0 && y2 + 1 < srcImg.rows;
 
-	sX = inside ?
+	int sX = inside ?
 		sobelRound(
 		(-srcImg(y2 - 1, x2 - 1) - 2 * srcImg(y2, x2 - 1) - srcImg(y2 + 1, x2 - 1)
-		+ srcImg(y2 - 1, x2 + 1) + 2 * srcImg(y2, x2 + 1) + srcImg(y2 + 1, x2 + 1)) * 0.125f) : sobel0;
+		+ srcImg(y2 - 1, x2 + 1) + 2 * srcImg(y2, x2 + 1) + srcImg(y2 + 1, x2 + 1)) * 0.125f) : 0;
 
-	sY = inside ?
+	int sY = inside ?
 		sobelRound(
 		(-srcImg(y2 - 1, x2 - 1) - 2 * srcImg(y2 - 1, x2) - srcImg(y2 - 1, x2 + 1)
-		+ srcImg(y2 + 1, x2 - 1) + 2 * srcImg(y2 + 1, x2) + srcImg(y2 + 1, x2 + 1)) * 0.125f) : sobel0;
+		+ srcImg(y2 + 1, x2 - 1) + 2 * srcImg(y2 + 1, x2) + srcImg(y2 + 1, x2 + 1)) * 0.125f) : 0;
 
 	dstImg(y2, x2) = sobelCode(sX,sY);
 }
@@ -37,8 +31,6 @@ void sobel1Px (Mat_<ushort>& dstImg, const Mat_<uchar>& srcImg, int x2, int y2)
 
 void sobel (Mat_<ushort>& dstImg, const Mat_<uchar>& srcImg)
 {
-    // TODO: implement (with sobel1p)
-    
     assert (dstImg.size()==srcImg.size());
 
 	for (int y2 = 0; y2 < dstImg.rows; y2++)
@@ -49,20 +41,39 @@ void sobel (Mat_<ushort>& dstImg, const Mat_<uchar>& srcImg)
 
 void sobel1PxFast (ushort* p, const uchar* pSrc, int sys)
 {
-    // TODO: implement (4P)
-    // Check using testCoreRoutines that both routines compute
-    // the same result
-    // Use ((val+3)>>3) for divison by 8 and rounding to give exact the same result
-    // we have in the unoptimized routines using sobelRound(...)
+	int sX = (-(int)pSrc[-sys - 1] - ((int)pSrc[-1] << 1) - (int)pSrc[+sys - 1]
+			 + (int)pSrc[-sys + 1] + ((int)pSrc[ 1] << 1) + (int)pSrc[+sys + 1] + 3) >> 3;
+
+	int sY = (-(int)pSrc[-sys - 1] - ((int)pSrc[-sys] << 1) - (int)pSrc[-sys + 1]
+			 + (int)pSrc[+sys - 1] + ((int)pSrc[+sys] << 1) + (int)pSrc[+sys + 1] + 3) >> 3;
+ 
+	*p = sobelCode(sX, sY);
 }
 
 
 void sobelFast (Mat_<ushort>& dstImg, const Mat_<uchar>& srcImg)
 {
-    // TODO: implement (2P)
-    // Provide a C++ implementation that is as fast as reasonable
-    // Keep in mind that dstImg pixels are of type ushort
     assert (dstImg.size()==srcImg.size());
+
+	ushort *p, *pEnd, *pLine;
+	const uchar *pSrc;
+	int sys = srcImg.step[0] / srcImg.step[1];
+
+	for (p = dstImg.ptr<ushort>(0), pEnd = p + dstImg.cols; p < pEnd; p++)
+		*p = sobel0;
+
+	for (int y2 = 1; y2 < dstImg.rows - 1; y2++) {
+		pLine = dstImg.ptr<ushort>(y2);
+		pLine[0] = sobel0;
+
+		for (pSrc = srcImg.ptr(y2) + 1, p = pLine + 1, pEnd = p + dstImg.cols - 2; p < pEnd; p++, pSrc++)
+			sobel1PxFast(p, pSrc, sys);
+
+		pLine[dstImg.cols - 1] = sobel0;
+	}
+
+	for (p = dstImg.ptr<ushort>(dstImg.rows - 1), pEnd = p + dstImg.cols; p<pEnd; p++)
+		*p = sobel0;
 }
 
 
