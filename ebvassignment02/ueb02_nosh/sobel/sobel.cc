@@ -18,6 +18,20 @@ void sobel1Px (Mat_<ushort>& dstImg, const Mat_<uchar>& srcImg, int x2, int y2)
     // No need to optimize here (this will be done in sobelFast)
     // Use sobelRound for rounding to give exact the same result
     // we have in the optimized routines.
+	int sX, sY;
+	bool inside = x2 - 1 >= 0 && x2 + 1 < srcImg.cols && y2 - 1 >= 0 && y2 + 1 < srcImg.rows;
+
+	sX = inside ?
+		(-srcImg(y2 - 1, x2 - 1) - 2 * srcImg(y2 - 1, x2) - srcImg(y2 - 1, x2 + 1)
+		+ srcImg(y2 + 1, x2 - 1) - 2 * srcImg(y2 + 1, x2) - srcImg(y2 + 1, x2 + 1))/8 : 0;
+
+	sY = inside ?
+		(-srcImg(y2 - 1, x2 - 1) - 2 * srcImg(y2, x2 - 1) - srcImg(y2 + 1, x2 - 1)
+		+ srcImg(y2 - 1, x2 + 1) - 2 * srcImg(y2, x2 + 1) - srcImg(y2 + 1, x2 + 1))/8 : 0;
+
+	// dstImg(y2, x2) = sobelCode(sX, sY);
+	dstImg(y2, x2) = sqrt(sX * sX + sY * sY);
+
 }
 
 
@@ -26,6 +40,10 @@ void sobel (Mat_<ushort>& dstImg, const Mat_<uchar>& srcImg)
     // TODO: implement (with sobel1p)
     
     assert (dstImg.size()==srcImg.size());
+
+	for (int y2 = 0; y2 < dstImg.rows; y2++)
+		for (int x2 = 0; x2 < dstImg.cols; x2++)
+			sobel1Px(dstImg, srcImg, x2, y2);
 }
 
 
