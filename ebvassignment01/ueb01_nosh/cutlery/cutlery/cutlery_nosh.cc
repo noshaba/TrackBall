@@ -109,11 +109,9 @@ void RegionSet::thresholdAndRLE(Mat_<uchar>& image, uchar threshold, int minLeng
 			if (image(i, j) > threshold){
 				if (length >= minLength)
 					rle.push_back(Interval(j - length, j - 1, i));
-				image(i, j) = 255;
 				length = 0;
 			}
 			else {
-				image(i, j) = 0;
 				++length;
 			}
 		}
@@ -258,6 +256,7 @@ void Region::eigenDecompositionSymmetric(const Matrix2x2& a, double& phi, double
 
 	ll0 = c2*a[0][0] + 2 * cs*a[1][0] + s2*a[1][1];
 	ll1 = s2*a[0][0] - 2 * cs*a[1][0] + c2*a[1][1];
+
 	if (ll0<ll1) {
 		if (phi>0) phi -= M_PI / 2;
 		else phi += M_PI / 2;
