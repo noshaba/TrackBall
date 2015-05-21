@@ -1,6 +1,7 @@
 \documentclass{ezb}
 \usepackage[]{todonotes}
 \usepackage{amsmath}
+\usepackage{gensymb}
 \usepackage{longtable}
 \usepackage[colorlinks,        	% Links ohne Umrandungen in zu wählender Farbe
    linkcolor=black,   			% Farbe interner Verweise
@@ -14,7 +15,7 @@
 
 % \maketitle{Nummer}{Abgabedatum}{Tutor-Name}{Gruppennummer}
 %           {Teilnehmer 1}{Teilnehmer 2}{Teilnehmer 3}
-\maketitle{22.05.15}{Udo Frese}{1}{Annika Ofenloch - 2992807 - ofenloch@uni-bremen.de}{Frank Ihle - 3010158 - fihle@uni-bremen.de}{Simon Schirrmacher - 4000884 - simons@informatik.uni-bremen.de}{Noshaba Cheema}
+\maketitle{22.05.15}{Udo Frese}{1}{Annika Ofenloch - 2992807 - ofenloch@uni-bremen.de}{Frank Ihle - 3010158 - fihle@uni-bremen.de}{Simon Schirrmacher - 4000884 - simons@informatik.uni-bremen.de}{Noshaba Cheema - ncheema@uni-bremen.de}
 
 %-------Text-Start------------------------------------------
 \section{Cutting-Edge Technology (10 Punkte)}
@@ -48,10 +49,14 @@ Nachdem der Spargel gewaschen und zugeschnitten wurde, wird er von Mitarbeitern 
 \subsubsection*{Kamera und Umgebung}
 Für die Merkmalskontrolle soll eine Bildaufnahme vom Spargel gemacht werden, wo keine Schattenwürfe oder andere externe Lichteffekte vorhanden sind, da solche Effekte als Schmutz oder Druckstellen interpretiert werden könnten. Die Lichtquelle selbst sollte nah bei der Kamera platziert werden, um einen Schattenwurf zu vermeiden (ggf. mehrere Lichtquellen oder ein Flächenlicht). 
 
-Innerhalb des geschlossenen Systems, wo die Bildverarbeitung zum Einsatz kommt, wird eine Kamera verwendet, die sich über den Spargelschalen befindet und senkrecht in Blickrichtung der Schalen ausgerichtet ist. Die Kamera nimmt einen definierten Bereich auf, der acht Sortierschalen umfasst. Demnach können mittels der Bildaufnahme bis zu acht Spargel gleichzeitig geprüft werden.
+Innerhalb des geschlossenen Systems, wo die Bildverarbeitung zum Einsatz kommt, werden zwei Kameras verwendet, die sich über den Spargelschalen und im Winkel von 90$\degree$ zueinander in Blickrichtung der Schalenflächen ausgerichtet befinden. Die Kameras nehmen synchron einen definierten Bereich auf, der eine Sortierschale umfasst.
 
 \subsubsection*{Fehler- und Merkmalskontrolle}
-Mit Hilfe der Bildverarbeitung sollen die Merkmale Länge, Durchmesser, Farbe sowie Form des Spargels kontrolliert werden. Es werden zwei Aufnahmen gemacht. Als erstes in der Ausgangsposition und wenn der Spargel um 90 Grad gedreht wurde (Der Spargel bleibt in den Sortierschalen und der herausragende Teil des Spargels wird auf einer Drehablage aufgelegt, sodass der Spargel gedreht werden kann). Durch die zwei Aufnahmen kann der Spargel von zwei Perspektiven aus betrachtet werden, um Form und Durchmesser zu vergleichen als auch den Spargel gegebenenfalls auf weitere Druckstellen, Verfärbungen und Verschmutzen zu untersuchen.  \todo[inline]{Der Spargel wird für die zweite Aufnahme bewegt? 
+Mit Hilfe der Bildverarbeitung sollen die Merkmale Länge, Durchmesser, Farbe sowie Form des Spargels kontrolliert werden. Es werden zwei Aufnahmen gemacht.
+
+Als erstes in der Ausgangsposition und wenn der Spargel um 90 Grad gedreht wurde (Der Spargel bleibt in den Sortierschalen und der herausragende Teil des Spargels wird auf einer Drehablage aufgelegt, sodass der Spargel gedreht werden kann).
+
+Durch die zwei Aufnahmen kann der Spargel von zwei Perspektiven aus betrachtet werden, um Form und Durchmesser zu vergleichen als auch den Spargel gegebenenfalls auf weitere Druckstellen, Verfärbungen und Verschmutzen zu untersuchen.  \todo[inline]{Der Spargel wird für die zweite Aufnahme bewegt? 
 Annika: Ja der Spargel wird um 90 Grad gedreht und dann nochmal abgelichtet.}
 
 Auf einer RGB-Bildaufnahme befinden sich acht Spargel, sodass vorerst eine Regionenbildung erfolgen muss. Betrachtet man die Aufnahme als Grauwertbild, unterscheiden sich die Grauwerte von den Sortierschalen (dunkle Grauwerte) von den des Spargels (helle Grauwerte). Demzufolge kann ein automatischer Schwellwert mit Hilfe des Otsu-Agorithmus festgelegt werden, sodass anschließend eine Regionenbildung unter Verwendung des Union-Region-Algorithmus durchgeführt werden kann. Als nächstes wird der Spargel separat in seiner jeweiligen Region betrachtet, um die Qualitätsanforderungen zu kontrollieren. Für die Merkmalskontrolle wird die RGB-Aufnahme verwendet.
@@ -62,25 +67,28 @@ Die gesundheitliche und äußere Beschaffenheit des Spargels wird über eine Far
 Die Feuchtigkeit lässt sich mit Einschränkungen über eine Farbsegementierung überprüfen, da Wasserreflexionen zu weißen Flecken führen. Demnach kann der weiße Farbanteil näher betrachtet werden. Diese Variante funktioniert gut bei einem grünen Spargel. Bei einem weißen Spargel wird die Erkennung von Wasserflecken schwierig, da bereits ein hoher weißer Farbanteil vorhanden ist. Die Feuchtigkeit muss demnach mit einem zusätzlichen Ansatz geprüft werden, da die Bildverarbeitung hier an ihre Grenzen kommt. Das gleiche gilt für den Geruch, Geschmack und Prallheitsgrad, welche sich nicht mit der Bildverarbeitung kontrollieren lassen.  \todo[inline]{Wieso lässt sich der Prallheitsgrad nicht ermitteln?
 Annika: Dabei geht es doch um die Festigkeit des Spargels oder?}
 
-Ein weiteres Merkmal, das betrachtet werden soll, ist die Schnittfläche am unteren Ende des Spargels. Das abgeschnittene Spargelende muss glatt sein. Hierfür muss geprüft werden, ob ein nahezu rechter Winkel vorhanden ist. Dies sollte bei beiden Bildaufnahmen kontrolliert werden, damit eine zweite Perspektive mit einbezogen wird.   \todo[inline]{Wie wird der Schnitt erkannt?}
+Der Spargel wird in zwei gleichgroße Bereich aufgeteilt, von denen einzeln die Hauptträgheitsachsen ermittelt werden.(s. Abb)
+Anhand des horizontalen Abstands (b) der vertikalen Achsen kann erkannt werden, ob der Spargel zu krumm ist.\\
 
-Die Form des Spargels lässt sich kontrollieren, indem von der Spargelmitte aus eine Gerade in Richtung der Hauptträgheitsachsen gezogen wird. Wenn sich ein gewisser Anteil der Gerade nicht im Spargelbereich befindet, ist der Spargel verbogen. Dies sollte ebenso für beide Bildaufnahmen durchgeführt werden, da die Krümmung gegebenenfalls nicht von jeder Perspektive aus sichtbar ist.
+Ein weiteres Merkmal, das betrachtet werden soll, ist die Schnittfläche am unteren Ende des Spargels. Das abgeschnittene Spargelende muss glatt sein.
 
-Für die Größensortierung wird zusätzlich zur Länge noch der Durchmesser benötigt, der in der Spargelmitte, bezogen auf die Länge, ermittelt werden soll. Hierfür wird eine Gerade in Richtung der Hauptträgkeitsachsen (Breite) bis zur Kante gezogen. Berechnet wird der Durchmesser für beide Bildaufnahmen (erforderlich bei einem ovalen Spargel). Für die Größensortierung (nach dem Durchmesser) wird der größere Durchmesser betrachtet.
+Hierfür wird vom Schwerpunkt aus, entlang der Hauptträgheitsachse, die Schnittkante am Wurzelende des Spargels gesucht und der letzte Pixel des Spargels definiert.
+Anhand von diesem gefundenen Pixel wird nun orthogonal zur Hauptträgheitsachse eine Gerade gezeichnet, mit der  die Qualität der Schnittkante überprüft werden soll.
+Nun werden die Flächen ober- und unterhalb (I, II) der gezeichneten Orthogonalen mit Hilfe eines Integrals berechnet (s. Abb.).
+Überschreitet diese Fläche einen bestimmten Schwellwert, ist die Qualitätsanforderung der Schnittkante des Spargels nicht erreicht.
+\\
+Bei den zwei zuvor beschriebenen Verfahren ist es besonders wichtig, beide erzeugten Bilder auszuwerten, um auszuschließen, dass Qualitätsmängel aus einer Perspektive nicht zu erkennen sind.
+
+Für die Größensortierung wird zusätzlich zur Länge noch der Durchmesser benötigt, der in der Spargelmitte, bezogen auf die Länge, ermittelt werden soll. Hierfür wird eine Gerade in Richtung der Hauptträgkeitsachsen (entlang der Breite des Spargels) bis zur Kante gezeichnet. Berechnet wird der Durchmesser für beide Bildaufnahmen (erforderlich bei einem ovalen Spargel). Für die Größensortierung (nach dem Durchmesser) wird der größere Durchmesser betrachtet.
 
 Jede Sortierschale bekommt im Verlauf der Qualitätskontrolle einen entsprechenden Ausgang zugeordnet, der sich auf die einzelnen Qualitäts- und Größenklassen bezieht.
- \todo[inline]{Werden alle Spargel aussortiert, wenn einer schlecht ist? 
- Annika: Nein, wieso sollte dann der komplette Spargel aussortiert werden? Meinst du den fehlerhaften Spargel oder den zu kurzen Spargel, der dann als Spargelspitzen weiterverwendet wird.}
-
 
 \subsubsection*{Sortierung des Spargels}
 Der Spargel bleibt vom Übergabebereich des Fließbandes bis zu dem vom Bildverarbeitungssystem zugewiesenen Ausgang in der Sortierschale. Über die Merkmalskontrolle bekommt jede Sortierschale eindeutig einen Ausgang zugewiesen. Bei den Ausgängen handelt es sich um verschiedene Auffangbehälter, wo der Spargel je nach Qualitätsbestimmung
 hin transportiert wird. Die Auffangbehälter stellen die einzelnen Qualitäts- sowie Größenklassen dar. 
 Sobald die Sortierschale mit dem Spargel den zugehörigen Auffangbehälter erreicht
-hat, hebt sich die Schale an, sodass der Spargel in die Kiste fällt. 
-Die Weiterverarbeitung erfolgt durch Mitarbeiter, wodurch der Spargel ein weiteres Mal gesichtet wird.
- \todo[inline]{Macht das der Spargel mit, fallengelassen zu werden? Alternativ wieder durch Mitarbeiter kontrollieren.
-Annika: Ich habe noch einen Satz hinzugefügt, aber ich würde den eigentlich weglassen.}
+hat, kippt sich die Schale, sodass der Spargel in die Kiste fällt. 
+Anschließend wird der Spargel durch Mitarbeiter verpackt.
 
 \newpage
 \section{Das runde Dreieck (1 Bonuspunkt)}
