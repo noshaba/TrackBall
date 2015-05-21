@@ -138,7 +138,6 @@ void sobelFastOpenMP (Mat_<ushort>& dstImg, const Mat_<uchar>& srcImg)
 		const uchar *pSrc;
 		int sys = srcImg.step[0] / srcImg.step[1];
 
-		#pragma omp for
 		for (p = dstImg.ptr<ushort>(0), pEnd = p + dstImg.cols; p < pEnd; p++)
 			*p = sobel0;
 
@@ -154,7 +153,6 @@ void sobelFastOpenMP (Mat_<ushort>& dstImg, const Mat_<uchar>& srcImg)
 			pLine[dstImg.cols - 1] = sobel0;
 		}
 
-		#pragma omp for
 		for (p = dstImg.ptr<ushort>(dstImg.rows - 1), pEnd = p + dstImg.cols; p < pEnd; p++)
 			*p = sobel0;
 	}
