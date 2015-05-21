@@ -1,5 +1,6 @@
 \documentclass{ezb}
 \usepackage[]{todonotes}
+\usepackage{amsmath}
 \usepackage{longtable}
 \usepackage[colorlinks,        	% Links ohne Umrandungen in zu wählender Farbe
    linkcolor=black,   			% Farbe interner Verweise
@@ -82,8 +83,90 @@ Die Weiterverarbeitung erfolgt durch Mitarbeiter, wodurch der Spargel ein weiter
 Annika: Ich habe noch einen Satz hinzugefügt, aber ich würde den eigentlich weglassen.}
 
 \newpage
-\section{Das runde Dreieck (1 Bonuspunkte)}
-
+\section{Das runde Dreieck (1 Bonuspunkt)}
+Hier soll auf die Rotation von Regionen eingegangen und deren Vorteil beschrieben werden, wenn eine Region $\Omega$ eine Drehsymmetrie besitzt. Zunächst kann die Trägheitsmatrix mit folgender Formel verdreht werden:\\
+\begin{equation}
+\begin{pmatrix}
+cos \alpha & sin \alpha \\
+-sin \alpha & cos \alpha 
+\end{pmatrix}^{T}
+\cdot
+\begin{pmatrix}
+I'xx & I'xy \\
+I'xy & I'yy 
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+cos \alpha & sin \alpha \\
+-sin \alpha & cos \alpha 
+\end{pmatrix}
+\label{urformel}
+\end{equation}
+\linebreak
+Ist eine Region drehsymmetrisch, so hat das Einfluss auf die Trägheitsmatrix mit $I'xy = 0$, $I'xx = I'yy$. Das wirkt sich auf \eqref{urformel} wie folgt aus:\\
+\begin{equation}
+\begin{pmatrix}
+cos \alpha & -sin \alpha \\
+sin \alpha & cos \alpha 
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+I'xx & 0 \\
+0 & I'xx 
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+cos \alpha & sin \alpha \\
+-sin \alpha & cos \alpha 
+\end{pmatrix}
+\label{drehformel}
+\end{equation}
+\linebreak
+So erhält man:\\
+\begin{center}
+\begin{tabular}{ c  c  | c  c}                   
+  			&				& $I'xx$ & 0 \\
+  			&				& 0 & $I'xx$ \\
+  	\hline    
+  cos $\alpha$ & -sin $\alpha$ 	& $I'xx$ cos $\alpha$ & $I'xx$ -sin $\alpha$\\
+  sin $\alpha$ & cos $\alpha$ 	& $I'xx$ sin $\alpha$ & $I'xx$ cos $\alpha$\\ 
+\end{tabular}
+\begin{equation}
+\begin{pmatrix}
+I'xx \ cos \alpha & - I'xx \ sin \alpha \\
+I'xx \ sin \alpha & I'xx \ cos \alpha 
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+cos \alpha & sin \alpha \\
+-sin \alpha & cos \alpha 
+\end{pmatrix}
+\label{drehformel2}
+\end{equation}
+\end{center}
+und\\
+\begin{center}
+\begin{tabular}{ c  c  | c  c}                   
+  					 &						& cos $\alpha$ & sin $\alpha$ \\
+  					 &						& -sin $\alpha$ & cos $\alpha$ \\
+  	\hline    
+  $I'xx \cdot cos \alpha$ & $-I'xx \cdot sin \alpha$ 	& $I'xx \ (cos^{2}$ $\alpha + sin^{2}$ $\alpha)$ & $I'xx \cdot  (cos \alpha sin \alpha - sin \alpha cos \alpha)$\\
+  $I'xx \cdot sin \alpha$ & $I'xx \cdot cos \alpha$ 	& $I'xx \ (cos \alpha sin \alpha - sin \alpha cos \alpha)$ & $I'xx \ (cos^{2}$ $\alpha + sin^{2}$ $\alpha)$\\ 
+\end{tabular}
+\end{center}
+mit
+\begin{center}
+$cos^{2} \alpha + sin^{2} \alpha = 1$\\
+\end{center}
+erhält man das Ergebnis:\\
+\begin{equation}
+\begin{pmatrix}
+I'xx & 0 \\
+0 & I'xx 
+\end{pmatrix}
+\label{drehformel3}
+\end{equation}
+Daraus ergeben sich ganz tolle Vorteile.
 
 %-------Text-End------------------------------------------
 \end{document}
