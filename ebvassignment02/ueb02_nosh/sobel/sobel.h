@@ -65,7 +65,6 @@ void sobelFast (Mat_<ushort>& dstImg, const Mat_<uchar>& srcImg);
 void sobel1PxFast (ushort* p, const uchar* pSrc, int sys);
 
 
-
 //! openMP wrapper that calls \c sobelFast in a parallel section
 void sobelFastOpenMP (Mat_<ushort>& dstImg, const Mat_<uchar>& srcImg);
 
