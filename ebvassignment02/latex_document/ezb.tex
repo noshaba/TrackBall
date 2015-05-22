@@ -2,6 +2,7 @@
 \usepackage[]{todonotes}
 \usepackage{amsmath}
 \usepackage{gensymb}
+\usepackage{wrapfig}
 \usepackage{longtable}
 \usepackage[colorlinks,        	% Links ohne Umrandungen in zu wählender Farbe
    linkcolor=black,   			% Farbe interner Verweise
@@ -47,10 +48,13 @@ Nachdem der Spargel gewaschen und zugeschnitten wurde, wird er von Mitarbeitern 
 \end{figure}
 
 \subsubsection*{Kamera und Umgebung}
-Für die Merkmalskontrolle soll eine Bildaufnahme vom Spargel gemacht werden, wo keine Schattenwürfe oder andere externe Lichteffekte vorhanden sind, da solche Effekte als Schmutz oder Druckstellen interpretiert werden könnten. Die Lichtquelle selbst sollte nah bei der Kamera platziert werden, um einen Schattenwurf zu vermeiden (ggf. mehrere Lichtquellen oder ein Flächenlicht). 
-
-Innerhalb des geschlossenen Systems, wo die Bildverarbeitung zum Einsatz kommt, werden zwei Kameras verwendet, die sich über den Spargelschalen und im Winkel von 90$\degree$ zueinander in Blickrichtung der Schalenflächen ausgerichtet befinden. Die Kameras nehmen synchron einen definierten Bereich auf, der eine Sortierschale umfasst.
-
+Für die Merkmalskontrolle soll eine Bildaufnahme vom Spargel gemacht werden, wo keine Schattenwürfe oder andere externe Lichteffekte vorhanden sind, da solche Effekte als Schmutz oder Druckstellen interpretiert werden könnten. Die Lichtquelle selbst sollte nah bei der Kamera platziert werden, um einen Schattenwurf zu vermeiden (ggf. mehrere Lichtquellen oder ein Flächenlicht).\\
+\begin{wrapfigure}{r}{0.31\textwidth}
+\includegraphics[width=0.25\textwidth]{kameras.png}
+\caption{\label{fig:kameras}Kameras}
+\end{wrapfigure}
+Innerhalb des geschlossenen Systems, wo die Bildverarbeitung zum Einsatz kommt, werden zwei Kameras verwendet, die sich über den Spargelschalen und im Winkel von 90$\degree$ zueinander in Blickrichtung der Schalenflächen ausgerichtet befinden (s. Abb. \ref{fig:kameras}). Die Kameras nehmen synchron einen definierten Bereich auf, der eine Sortierschale umfasst.
+\clearpage
 \subsubsection*{Fehler- und Merkmalskontrolle}
 Mit Hilfe der Bildverarbeitung sollen die Merkmale Länge, Durchmesser, Farbe sowie Form des Spargels kontrolliert werden. Es werden zwei Aufnahmen gemacht.
 
@@ -60,19 +64,24 @@ Durch die zwei Aufnahmen kann der Spargel von zwei Perspektiven aus betrachtet w
 
 Auf einer RGB-Bildaufnahme befinden sich acht Spargel, sodass vorerst eine Regionenbildung erfolgen muss. Betrachtet man die Aufnahme als Grauwertbild, unterscheiden sich die Grauwerte von den Sortierschalen (dunkle Grauwerte) von den des Spargels (helle Grauwerte). Demzufolge kann ein automatischer Schwellwert mit Hilfe des Otsu-Agorithmus festgelegt werden, sodass anschließend eine Regionenbildung unter Verwendung des Union-Region-Algorithmus durchgeführt werden kann. Als nächstes wird der Spargel separat in seiner jeweiligen Region betrachtet, um die Qualitätsanforderungen zu kontrollieren. Für die Merkmalskontrolle wird die RGB-Aufnahme verwendet.
 
-Anhand der Spargel-Länge und der runden Spargelspitze wird kontrolliert, ob dieser ganz ist. Die Rundung könnte unter Verwendung eines Kantenerkennungs-Algorithmus geprüft werden. Wenn keine Krümmung (Abgerundeter Kopf) vorhanden ist, wird der Spargel als unvollständig gekennzeichnet und demnach einen entsprechenden Ausgang (z.B. \glqq Fehlerhafter Spargel\grqq) zugeordnet. \todo[inline]{Wie wird die Krümmung erkannt?}
-
-Die gesundheitliche und äußere Beschaffenheit des Spargels wird über eine Farbsegmentierung geprüft, indem braune als auch schwarze Verfärbungen betrachtet werden. Sobald der braune beziehungsweise schwarze Farbanteil einen prozentualen Anteil übersteigt, ist der Spargel krank, verschmutzt oder von Schädlingen befallen. Rostflecken und rosafarbige Verfärbungen lassen sich ebenfalls mit einer Farbsegmentierung erkennen.
-Die Feuchtigkeit lässt sich mit Einschränkungen über eine Farbsegementierung überprüfen, da Wasserreflexionen zu weißen Flecken führen. Demnach kann der weiße Farbanteil näher betrachtet werden. Diese Variante funktioniert gut bei einem grünen Spargel. Bei einem weißen Spargel wird die Erkennung von Wasserflecken schwierig, da bereits ein hoher weißer Farbanteil vorhanden ist. Die Feuchtigkeit muss demnach mit einem zusätzlichen Ansatz geprüft werden, da die Bildverarbeitung hier an ihre Grenzen kommt. Das gleiche gilt für den Geruch, Geschmack und Prallheitsgrad, welche sich nicht mit der Bildverarbeitung kontrollieren lassen.
-
-Der Spargel wird in zwei gleichgroße Bereich aufgeteilt, von denen einzeln die Hauptträgheitsachsen ermittelt werden.(s. Abb)
-Anhand des horizontalen Abstands (b) der vertikalen Achsen kann erkannt werden, ob der Spargel zu krumm ist.\\
-
-Ein weiteres Merkmal, das betrachtet werden soll, ist die Schnittfläche am unteren Ende des Spargels. Das abgeschnittene Spargelende muss glatt sein.
-
+Anhand der Spargel-Länge und der runden Spargelspitze wird kontrolliert, ob dieser ganz ist. Die Rundung könnte unter Verwendung eines Kantenerkennungs-Algorithmus geprüft werden. Wenn keine Krümmung (Abgerundeter Kopf) vorhanden ist, wird der Spargel als unvollständig gekennzeichnet und demnach einen entsprechenden Ausgang (z.B. \glqq Fehlerhafter Spargel\grqq) zugeordnet.\\
+Die gesundheitliche und äußere Beschaffenheit des Spargels wird über eine Farbsegmentierung geprüft, indem braune als auch schwarze Verfärbungen betrachtet werden. Sobald der braune beziehungsweise schwarze Farbanteil einen prozentualen Anteil übersteigt, ist der Spargel krank, verschmutzt oder von Schädlingen befallen. Rostflecken und rosafarbige Verfärbungen lassen sich ebenfalls mit einer Farbsegmentierung erkennen.\\
+Die Feuchtigkeit lässt sich mit Einschränkungen über eine Farbsegementierung überprüfen, da Wasserreflexionen zu weißen Flecken führen. Demnach kann der weiße Farbanteil näher betrachtet werden. Diese Variante funktioniert gut bei einem grünen Spargel. Bei einem weißen Spargel wird die Erkennung von Wasserflecken schwierig, da bereits ein hoher weißer Farbanteil vorhanden ist. Die Feuchtigkeit muss demnach mit einem zusätzlichen Ansatz geprüft werden, da die Bildverarbeitung hier an ihre Grenzen kommt. Das gleiche gilt für den Geruch, Geschmack und Prallheitsgrad, welche sich nicht mit der Bildverarbeitung kontrollieren lassen.\\
+\begin{wrapfigure}{r}{0.5\textwidth}
+\includegraphics[width=0.5\textwidth]{schief.png}
+\caption{\label{fig:schief}Schnittkante}
+\end{wrapfigure}
+Der Spargel wird in zwei gleichgroße Bereich aufgeteilt, von denen einzeln die Hauptträgheitsachsen ermittelt werden.(s. Abb. \ref{fig:schief})
+Anhand des horizontalen Abstands (b) der vertikalen Achsen kann erkannt werden, ob der Spargel zu krumm ist.
+\clearpage
+Ein weiteres Merkmal, das betrachtet werden soll, ist die Schnittfläche am unteren Ende des Spargels. Das abgeschnittene Spargelende muss glatt sein.\\
+\begin{wrapfigure}{r}{0.5\textwidth}
+\includegraphics[width=0.4\textwidth]{schnitt.png}
+\caption{\label{fig:schnitt}Schnittkante}
+\end{wrapfigure}
 Hierfür wird vom Schwerpunkt aus, entlang der Hauptträgheitsachse, die Schnittkante am Wurzelende des Spargels gesucht und der letzte Pixel des Spargels definiert.
 Anhand von diesem gefundenen Pixel wird nun orthogonal zur Hauptträgheitsachse eine Gerade gezeichnet, mit der  die Qualität der Schnittkante überprüft werden soll.
-Nun werden die Flächen ober- und unterhalb (I, II) der gezeichneten Orthogonalen mit Hilfe eines Integrals berechnet (s. Abb.).
+Nun werden die Flächen ober- und unterhalb (I, II) der gezeichneten Orthogonalen mit Hilfe eines Integrals berechnet (s. Abb. \ref{fig:schnitt}).
 Überschreitet diese Fläche einen bestimmten Schwellwert, ist die Qualitätsanforderung der Schnittkante des Spargels nicht erreicht.
 \\
 Bei den zwei zuvor beschriebenen Verfahren ist es besonders wichtig, beide erzeugten Bilder auszuwerten, um auszuschließen, dass Qualitätsmängel aus einer Perspektive nicht zu erkennen sind.
