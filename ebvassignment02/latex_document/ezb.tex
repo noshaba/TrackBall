@@ -78,7 +78,7 @@ void sobel (Mat_<ushort>& dstImg, const Mat_<uchar>& srcImg)
 	*p = sobelCode(sX, sY);\
 }
 \end{lstlisting}
-
+\newpage
 \begin{lstlisting}[language=C++, caption=Core routine for \textbackslash c sobelFast]
 void sobel1PxFast (ushort* p, const uchar* pSrc, int sys)
 {
@@ -181,17 +181,17 @@ Durch die zwei Aufnahmen kann der Spargel von zwei Perspektiven aus betrachtet w
 \linebreak
 Auf einer RGB-Bildaufnahme befinden sich acht Spargel, sodass vorerst eine Regionenbildung erfolgen muss. Betrachtet man die Aufnahme als Grauwertbild, unterscheiden sich die Grauwerte von den Sortierschalen (dunkle Grauwerte) zu denen des Spargels (helle Grauwerte). Demzufolge kann ein automatischer Schwellwert mit Hilfe des Otsu-Agorithmus festgelegt werden, sodass anschließend eine Regionenbildung unter Verwendung des Union-Region-Algorithmus durchgeführt werden kann.\\
 \linebreak 
-Als nächstes wird der Spargel separat in seiner jeweiligen Region betrachtet, um die Qualitätsanforderungen zu kontrollieren. Für die Merkmalskontrolle wird die RGB-Aufnahme verwendet. Anhand der Spargel-Länge und der runden Spargelspitze wird kontrolliert, ob dieser ganz ist. Die Rundung könnte unter Verwendung eines Kantenerkennungs-Algorithmus geprüft werden. Wenn keine Krümmung (Abgerundeter Kopf) vorhanden ist, wird der Spargel als unvollständig gekennzeichnet und demnach einen entsprechenden Ausgang (z.B. \glqq Fehlerhafter Spargel\grqq) zugeordnet. Die Erkennung selbst erfolgt über einen Flächenvergleich. Entlang der Hauptträgheitsachse sucht man sich den letzten Pixel auf dem Spargel und definiert, ausgehend von diesem Pixel, einen Bereich nach unten (z.B.: eine Spargelbreite). Dann berechnet man den Flächeninhalt des vorliegenden Spargels, von diesem Bereich. Wenn es ein Spargelkopf ist (entspricht in etwa einem Halbkreis) ist die Fläche kleiner als bei einem abgebrochenem Spargel (entspricht in etwa einem Rechteck).\\
+Als nächstes wird der Spargel separat in seiner jeweiligen Region betrachtet, um die Qualitätsanforderungen zu kontrollieren. Für die Merkmalskontrolle wird die RGB-Aufnahme verwendet. Anhand der Spargel-Länge und der runden Spargelspitze wird kontrolliert, ob dieser ganz ist. Wenn keine Krümmung (Abgerundeter Kopf) vorhanden ist, wird der Spargel als unvollständig gekennzeichnet und demnach einen entsprechenden Ausgang (z.B. \glqq Fehlerhafter Spargel\grqq) zugeordnet. Die Erkennung selbst erfolgt über einen Flächenvergleich. Entlang der Hauptträgheitsachse sucht man sich den letzten Pixel auf dem Spargel (in Richtung des Spargelkopfs) und definiert, ausgehend von diesem Pixel, einen Bereich nach unten (z.B.: eine Spargelbreite). Dann berechnet man den Flächeninhalt des vorliegenden Spargels, von diesem Bereich. Wenn es ein Spargelkopf ist (entspricht in etwa einem Halbkreis), ist die Fläche kleiner als bei einem abgebrochenem Spargel (entspricht in etwa einem Rechteck).\\
 \linebreak
 Die gesundheitliche und äußere Beschaffenheit des Spargels wird über eine Farbsegmentierung geprüft, indem braune als auch schwarze Verfärbungen betrachtet werden. Sobald der braune beziehungsweise schwarze Farbanteil einen prozentualen Anteil übersteigt, ist der Spargel krank, verschmutzt oder von Schädlingen befallen. Rostflecken und rosafarbige Verfärbungen lassen sich ebenfalls mit einer Farbsegmentierung erkennen.\\
 \linebreak
-Die Feuchtigkeit lässt sich mit Einschränkungen über eine Farbsegementierung überprüfen, da Wasserreflexionen zu weißen Flecken führen. Demnach kann der weiße Farbanteil näher betrachtet werden. Diese Variante funktioniert gut bei einem grünen Spargel. Bei einem weißen Spargel wird die Erkennung von Wasserflecken schwierig, da bereits ein hoher weißer Farbanteil vorhanden ist. Die Feuchtigkeit muss demnach mit einem zusätzlichen Ansatz geprüft werden, da die Bildverarbeitung hier an ihre Grenzen kommt. Das gleiche gilt für den Geruch, Geschmack und Prallheitsgrad, welche sich nicht mit der Bildverarbeitung kontrollieren lassen.\todo[inline]{spargel/hauptträgheitsachsen/regionen bild muss verschoben werden.}
+Die Feuchtigkeit lässt sich über eine Farbsegementierung überprüfen, da Wasserreflexionen zu weißen Flecken führen. Demnach kann der weiße Farbanteil näher betrachtet werden. Diese Variante funktioniert gut bei einem grünen Spargel. Bei einem weißen Spargel wird die Erkennung von Wasserflecken schwieriger, da bereits ein hoher weißer Farbanteil vorhanden ist. Die Feuchtigkeit muss demnach mit einem zusätzlichen Ansatz geprüft werden, da die Bildverarbeitung hier an ihre Grenzen kommt. Das gleiche gilt für den Geruch, Geschmack und Prallheitsgrad, welche sich nicht mit der Bildverarbeitung kontrollieren lassen. \linebreak
 \begin{wrapfigure}{r}{0.5\textwidth}
-\includegraphics[width=0.5\textwidth]{schief.png}
+\includegraphics[width=0.35\textwidth]{schief.png}
 \caption{\label{fig:schief}Der Spargel wird in zwei Regionen aufgeteilt, um so ein sicheres Ergebnis zu ermitteln.}
 \end{wrapfigure}
-Der Spargel wird in zwei gleichgroße Bereich aufgeteilt, von denen einzeln die Hauptträgheitsachsen ermittelt werden.(s. Abbildung \ref{fig:schief})
-Anhand des horizontalen Abstands b der vertikalen Achsen kann erkannt werden, ob der Spargel zu krumm ist.
+Um die Form des Spargels zu überprüfen, wird dieser in zwei gleichgroße Bereiche aufgeteilt, von denen einzeln die Hauptträgheitsachsen ermittelt werden.(s. Abbildung \ref{fig:schief})
+Anhand des horizontalen Abstands \textit{b} der vertikalen Achsen kann erkannt werden, ob der Spargel zu krumm ist.
 \clearpage
 Ein weiteres Merkmal, das betrachtet werden soll, ist die Schnittfläche am unteren Ende des Spargels. Das abgeschnittene Spargelende muss glatt sein.\\
 \begin{wrapfigure}{r}{0.5\textwidth}
@@ -209,9 +209,10 @@ Für die Größensortierung wird zusätzlich zur Länge noch der Durchmesser ben
 
 Jede Sortierschale bekommt im Verlauf der Qualitätskontrolle einen entsprechenden Ausgang zugeordnet, der sich auf die einzelnen Qualitäts- und Größenklassen bezieht.
 
+Zu Beginn der Spargelsortierung wird bei der Maschine eingestellt, ob es sich um einen weißen, grünen oder violetten Spargel handelt, um die Verfahren bezüglich der Spargelfarbe anzupassen (Schwellwerte unterscheiden sich je nach Spargelsorte).
+
 \subsubsection*{Sortierung des Spargels}
-Der Spargel bleibt vom Übergabebereich des Fließbandes bis zu dem vom Bildverarbeitungssystem zugewiesenen Ausgang in der Sortierschale. Über die Merkmalskontrolle bekommt jede Sortierschale eindeutig einen Ausgang zugewiesen. Bei den Ausgängen handelt es sich um verschiedene Auffangbehälter, wo der Spargel je nach Qualitätsbestimmung
-hin transportiert wird. Die Auffangbehälter stellen die einzelnen Qualitäts- sowie Größenklassen dar. 
+Der Spargel bleibt vom Übergabebereich des Fließbandes bis zu dem vom Bildverarbeitungssystem zugewiesenen Ausgang in der Sortierschale. Über die Merkmalskontrolle bekommt jede Sortierschale eindeutig einen Ausgang zugewiesen. Bei den Ausgängen handelt es sich um verschiedene Auffangbehälter, wo der Spargel je nach Qualitätsbestimmung hin transportiert wird. Die Auffangbehälter stellen die einzelnen Qualitäts- sowie Größenklassen dar. 
 Sobald die Sortierschale mit dem Spargel den zugehörigen Auffangbehälter erreicht
 hat, kippt sich die Schale, sodass der Spargel in die Kiste fällt. 
 Anschließend wird der Spargel durch Mitarbeiter verpackt.
