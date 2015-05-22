@@ -83,7 +83,7 @@ void sobelFast (Mat_<ushort>& dstImg, const Mat_<uchar>& srcImg)
 	pLine = dstImg.ptr<ushort>(0);
 	// apply sobel on first line of image - have to be 0 since undefined with a 3x3 filter
 	#pragma omp for
-	for (int y = 0; y < dstImg.rows; y++)
+	for (int y = 0; y < dstImg.cols; y++)
 		pLine[y] = sobel0;
 
 	// apply sobel on second to last - 1 line of image
@@ -106,7 +106,7 @@ void sobelFast (Mat_<ushort>& dstImg, const Mat_<uchar>& srcImg)
 	pLine = dstImg.ptr<ushort>(dstImg.rows - 1);
 	// apply sobel on last line of image - have to be 0 since undefined with a 3x3 filter
 	#pragma omp for
-	for (int y = 0; y < dstImg.rows; y++)
+	for (int y = 0; y < dstImg.cols; y++)
 		pLine[y] = sobel0;
 }
 
