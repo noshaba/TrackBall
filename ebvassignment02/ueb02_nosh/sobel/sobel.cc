@@ -75,8 +75,8 @@ void sobelFast (Mat_<ushort>& dstImg, const Mat_<uchar>& srcImg)
 {
 	assert(dstImg.size() == srcImg.size()); 
 	
-	ushort *p, *pEnd, *pLine; 
-	const uchar *pSrc; 
+	ushort *p = nullptr, *pEnd = nullptr, *pLine = nullptr; 
+	const uchar *pSrc = nullptr; 
 	// step to neighbor
 	int sys = srcImg.step[0] / srcImg.step[1];
 
