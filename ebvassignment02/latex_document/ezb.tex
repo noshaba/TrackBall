@@ -4,6 +4,7 @@
 \usepackage{gensymb}
 \usepackage{wrapfig}
 \usepackage{longtable}
+\usepackage{amssymb}
 \usepackage[colorlinks,        	% Links ohne Umrandungen in zu wählender Farbe
    linkcolor=black,   			% Farbe interner Verweise
    filecolor=black,   			% Farbe externer Verweise
@@ -218,7 +219,12 @@ Anschließend wird der Spargel durch Mitarbeiter verpackt.
 
 \newpage
 \section{Das runde Dreieck (1 Bonuspunkt)}
-Hier soll auf die Rotation von Regionen eingegangen und deren Vorteil beschrieben werden, wenn eine Region $\Omega$ eine Drehsymmetrie besitzt. Zunächst kann die Trägheitsmatrix mit folgender Formel verdreht werden:\\
+Hier soll bewiesen werden, dass eine Region $\Omega$, die eine Drehsymmetrie von < 180 \degree besitzt, die Hauptträgheitsmatrix ein Vielfaches der Einheitsmatrix entspricht.\\
+\\
+Ansatz: \\
+Wird ein Objekt, dass um den Winkel $\alpha$ drehsymmetrisch ist, um den Winkel $\alpha$ gedreht, so kommt wieder dasselbe Objekt heraus.\\
+\\
+Also:\\
 \begin{equation}
 \begin{pmatrix}
 cos \alpha & sin \alpha \\
@@ -234,10 +240,25 @@ I'xy & I'yy
 cos \alpha & sin \alpha \\
 -sin \alpha & cos \alpha 
 \end{pmatrix}
+= \\
+\begin{pmatrix}
+I'xx & I'xy \\
+I'xy & I'yy 
+\end{pmatrix}
 \label{urformel}
 \end{equation}
 \linebreak
-Ist eine Region drehsymmetrisch, so hat das Einfluss auf die Trägheitsmatrix mit $I'xy = 0$, $I'xx = I'yy$. Das wirkt sich auf \eqref{urformel} wie folgt aus:\\
+Zunächst gehen wir davon aus, dass unser Objekt nicht gedreht ist.\\
+Dann besitzt es die folgende Trägheitsmatrix:\\
+\begin{equation}
+\begin{pmatrix}
+I'xx & 0 \\
+0 & I'yy
+\end{pmatrix}
+\end{equation}
+\linebreak
+Nun muss bewiesen werden, dass $I'xx = I'yy$.\\
+Dazu rotieren wir die Matrix...:\\
 \begin{equation}
 \begin{pmatrix}
 cos \alpha & -sin \alpha \\
@@ -246,7 +267,7 @@ sin \alpha & cos \alpha
 \cdot
 \begin{pmatrix}
 I'xx & 0 \\
-0 & I'xx 
+0 & I'yy 
 \end{pmatrix}
 \cdot
 \begin{pmatrix}
@@ -255,53 +276,88 @@ cos \alpha & sin \alpha \\
 \end{pmatrix}
 \label{drehformel}
 \end{equation}
-\linebreak
-So erhält man:\\
-\begin{center}
-\begin{tabular}{ c  c  | c  c}                   
-  			&				& $I'xx$ & 0 \\
-  			&				& 0 & $I'xx$ \\
-  	\hline    
-  cos $\alpha$ & -sin $\alpha$ 	& $I'xx$ cos $\alpha$ & $I'xx$ -sin $\alpha$\\
-  sin $\alpha$ & cos $\alpha$ 	& $I'xx$ sin $\alpha$ & $I'xx$ cos $\alpha$\\ 
-\end{tabular}
+...und erhalten:
 \begin{equation}
 \begin{pmatrix}
-I'xx \ cos \alpha & - I'xx \ sin \alpha \\
-I'xx \ sin \alpha & I'xx \ cos \alpha 
+cos \alpha & - sin \alpha \\
+sin \alpha & cos \alpha 
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+I'xx & 0 \\
+0 & I'yy
+\end{pmatrix}
+=
+\end{equation}
+\begin{center}
+\begin{tabular}{ c  c  | c  c}         
+  			&				& $I'xx$ & 0 \\
+  			&				& 0 & $I'yy$ \\
+  	\hline    
+  cos $\alpha$ & -sin $\alpha$ 	& $I'xx$ cos $\alpha$ & $- I'yy$ sin $\alpha$\\
+  sin $\alpha$ & cos $\alpha$ 	& $I'xx$ sin $\alpha$ & $I'yy$ cos $\alpha$\\ 
+\end{tabular}
+\end{center}
+\begin{equation}
+\begin{pmatrix}
+I'xx \ cos \alpha & - I'yy \ sin \alpha \\
+I'xx \ sin \alpha & I'yy \ cos \alpha 
 \end{pmatrix}
 \cdot
 \begin{pmatrix}
 cos \alpha & sin \alpha \\
 -sin \alpha & cos \alpha 
 \end{pmatrix}
+=
 \label{drehformel2}
 \end{equation}
-\end{center}
-und\\
 \begin{center}
 \begin{tabular}{ c  c  | c  c}                   
   					 &						& cos $\alpha$ & sin $\alpha$ \\
   					 &						& -sin $\alpha$ & cos $\alpha$ \\
   	\hline    
-  $I'xx \cdot cos \alpha$ & $-I'xx \cdot sin \alpha$ 	& $I'xx \ (cos^{2}$ $\alpha + sin^{2}$ $\alpha)$ & $I'xx \cdot  (cos \alpha sin \alpha - sin \alpha cos \alpha)$\\
-  $I'xx \cdot sin \alpha$ & $I'xx \cdot cos \alpha$ 	& $I'xx \ (cos \alpha sin \alpha - sin \alpha cos \alpha)$ & $I'xx \ (cos^{2}$ $\alpha + sin^{2}$ $\alpha)$\\ 
+  $I'xx \cdot cos \alpha$ & $-I'yy \cdot sin \alpha$ 	& $I'xx \ cos^{2}$ $\alpha + I'yy \ sin^{2}$ $\alpha$ & $(I'xx - I'yy) \ sin \alpha \ cos \alpha$\\
+  $I'xx \cdot sin \alpha$ & $I'yy \cdot cos \alpha$ 	&  $(I'xx - I'yy) \ sin \alpha \ cos \alpha$ & $I'xx \ sin^{2}$ $\alpha + I'yy \ cos^{2}$ $\alpha$\\ 
 \end{tabular}
 \end{center}
-mit
-\begin{center}
-$cos^{2} \alpha + sin^{2} \alpha = 1$\\
-\end{center}
-erhält man das Ergebnis:\\
 \begin{equation}
 \begin{pmatrix}
-I'xx & 0 \\
-0 & I'xx 
+I'xx \ cos^{2}$ $\alpha + I'yy \ sin^{2}$ $\alpha &(I'xx - I'yy) \ sin \alpha \ cos \alpha \\
+(I'xx - I'yy) \ sin \alpha \ cos \alpha & I'xx \ sin^{2}$ $\alpha + I'yy \ cos^{2}$ $\alpha
 \end{pmatrix}
-\label{drehformel3}
 \end{equation}
 \linebreak
-Allgemein lässt sich sagen, dass wenn ein drehsymmetrisches Objekt vorliegt, kann die Orientierung der Hauptträgheitsachsen nicht bestimmt werden. Das hat zur Folge, dass man den Mittel- oder Schwerpunkt eines Objekts nicht immer über die Hauptträgheitsachsen bestimmen kann. Für diese Sonderfälle muss ein anderes Verfahren angewendet werden. Die Methode kann also nicht blind angewendet werden und man braucht deshalb auf jeden Fall Vorwissen, was für Objekte in einer Bildverarbeitung analysiert werden, um entsprechend den passenden Algorithmus anzuwenden.
+\\
+Mit unserem oben genannten Ansatz muss folgendes gelten:\\
+\begin{equation}
+\begin{pmatrix}
+I'xx \ cos^{2}$ $\alpha + I'yy \ sin^{2}$ $\alpha & (I'xx - I'yy) \ sin \alpha \ cos \alpha \\
+(I'xx - I'yy) \ sin \alpha \ cos \alpha & I'xx \ sin^{2}$ $\alpha + I'yy \ cos^{2}$ $\alpha
+\end{pmatrix}
+=
+\begin{pmatrix}
+I'xx & 0 \\
+0 & I'yy
+\end{pmatrix}
+\end{equation}
+\newpage
+Also:\\
+\begin{center}
+$I'xx \ cos^{2}$ $\alpha + I'yy \ sin^{2}$ $\alpha = I'xx$\\
+$I'xx \ sin^{2}$ $\alpha + I'yy \ cos^{2}$ $\alpha = I'yy$\\
+$ (I'xx - I'yy) \ sin \alpha \ cos \alpha =0 = I'xy $\\
+\end{center}
+Nun gibt es 3 Möglichkeiten bei der $ (I'xx - I'yy) \ sin \alpha \ cos \alpha =0 $ wahr wird.\\
+\\
+1. $cos(z \cdot \pi / 2) = 0$ (Drehung um $z \cdot 90$ \degree), wobei $z \in \mathbb{Z}$ und $|mod(z,2)| = 1$\\
+2. $sin(z \cdot \pi) = 0$ (Drehung um $z \cdot 180$ \degree), wobei $z \in \mathbb{Z}$\\
+3. $I'xx = I'yy$ (Dann $I'xx - I'yy = 0$)\\
+\\
+Da wir von einem drehsymmetrischen Objekt ausgehen, was eine Drehsymmetrie von $\alpha < 180$\degree hat, also beispielsweise 120\degree wie bei einem gleichseitigem Dreieck, muss Möglichkeit 3 wahr sein.\\
+Bei drehsymmetrischen Objekten < 180\degree ist also $I'xx = I'yy$ und $I'xy = 0$, denn bei egal welcher Drehung würde immer  $I'xx = I'yy$ und $I'xy = 0$ herauskommen, da Nummer 3 wahr sein muss. Damit haben wir gezeigt, dass Objekte, die eine Drehsymmetrie von $< 180$\degree haben, tatsächlich ein Vielfaches der Einheitsmatrix als Trägheitsmatrix haben.\\
+Objekte mit einer Drehsymmetrie von 180 hätten hingegen verschiedene $I'xx$ und $I'yy$, da sie in $x$ und $y$ Richtung verschieden skaliert sind.\\
+\\
+Dies bedeutet für die Praxis, dass wenn ein Objekt mit einer Drehsymmetrie von $< 180$ \degree vorliegt, kann die Orientierung der Hauptträgheitsachsen nicht bestimmt werden. Das hat zur Folge, dass die Orientierung des Objektes nicht eindeutig bestimmt werden kann anhand der Hauptträgheitsachsen - man würde immer davon ausgehen es sei nicht gedreht, obwohl es im realen eigentlich gedreht ist. Für diese Sonderfälle muss ein anderes Verfahren angewendet werden, um deren Orientierung zu bestimmen. Die Methode kann also nicht blind angewendet werden und man braucht deshalb auf jeden Fall Vorwissen, was für Objekte in einer Bildverarbeitung analysiert werden, um entsprechend den passenden Algorithmus anzuwenden.
 
 %-------Text-End------------------------------------------
 \end{document}
