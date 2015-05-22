@@ -56,7 +56,7 @@ void sobel (Mat_<ushort>& dstImg, const Mat_<uchar>& srcImg)
 }
 \end{lstlisting}
 
-\begin{lstlisting}[language=C++, caption=sobel1PxFast as macro function]
+\begin{lstlisting}[language=C++, caption=sobel1PxFast as macro function for an even better performance]
 /* sobel1PxFast as macro function
 * 
 * Advantage:
@@ -355,7 +355,8 @@ Nun gibt es 3 Möglichkeiten bei der $ (I'xx - I'yy) \ sin \alpha \ cos \alpha =
 3. $I'xx = I'yy$ (Dann $I'xx - I'yy = 0$)\\
 \\
 Da wir von einem drehsymmetrischen Objekt ausgehen, was eine Drehsymmetrie von $\alpha < 180$\degree hat, also beispielsweise 120\degree wie bei einem gleichseitigem Dreieck, muss Möglichkeit 3 wahr sein.\\
-Bei drehsymmetrischen Objekten < 180\degree ist also $I'xx = I'yy$ und $I'xy = 0$, denn bei egal welcher Drehung würde immer  $I'xx = I'yy$ und $I'xy = 0$ herauskommen, da Nummer 3 wahr sein muss. Damit haben wir gezeigt, dass Objekte, die eine Drehsymmetrie von $< 180$\degree haben, tatsächlich ein Vielfaches der Einheitsmatrix als Trägheitsmatrix haben.\\
+Bei drehsymmetrischen Objekten < 180\degree ist also $I'xx = I'yy$ und $I'xy = 0$, denn bei egal welcher Drehung würde immer  $I'xx = I'yy$ und $I'xy = 0$ herauskommen, da Nummer 3 wahr sein muss.\\
+Damit haben wir gezeigt, dass Objekte, die eine Drehsymmetrie von $< 180$\degree haben, tatsächlich ein Vielfaches der Einheitsmatrix als Trägheitsmatrix haben.\\
 Objekte mit einer Drehsymmetrie von 180 hätten hingegen verschiedene $I'xx$ und $I'yy$, da sie in $x$ und $y$ Richtung verschieden skaliert sind.\\
 \\
 Dies bedeutet für die Praxis, dass wenn ein Objekt mit einer Drehsymmetrie von $< 180$ \degree vorliegt, kann die Orientierung der Hauptträgheitsachsen nicht bestimmt werden. Das hat zur Folge, dass die Orientierung des Objektes nicht eindeutig bestimmt werden kann anhand der Hauptträgheitsachsen - man würde immer davon ausgehen es sei nicht gedreht, obwohl es im realen eigentlich gedreht ist. Für diese Sonderfälle muss ein anderes Verfahren angewendet werden, um deren Orientierung zu bestimmen. Die Methode kann also nicht blind angewendet werden und man braucht deshalb auf jeden Fall Vorwissen, was für Objekte in einer Bildverarbeitung analysiert werden, um entsprechend den passenden Algorithmus anzuwenden.
