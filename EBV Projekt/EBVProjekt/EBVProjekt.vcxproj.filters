@@ -30,6 +30,12 @@
     <ClInclude Include="sobelgui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="houghCircle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hcgui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="gui.cc">
@@ -42,6 +48,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="sobelgui.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="houghCircle.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hcgui.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

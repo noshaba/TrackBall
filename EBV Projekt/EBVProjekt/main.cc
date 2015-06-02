@@ -5,7 +5,7 @@
 
 #if !defined(MAIN_NR)
 #pragma message ("If this does not compile please define MAIN_NR")
-#define MAIN_NR 1
+#define MAIN_NR 2
 #endif
 
 #ifdef WIN32

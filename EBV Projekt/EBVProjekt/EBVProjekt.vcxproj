@@ -14,7 +14,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{44593174-4A0B-4AA5-9C42-B842948351F2}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>sobel</RootNamespace>
+    <RootNamespace>EBVProjekt</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -87,11 +87,15 @@
   <ItemGroup>
     <ClInclude Include="central.h" />
     <ClInclude Include="gui.h" />
+    <ClInclude Include="hcgui.h" />
+    <ClInclude Include="houghCircle.h" />
     <ClInclude Include="sobel.h" />
     <ClInclude Include="sobelgui.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="gui.cc" />
+    <ClCompile Include="hcgui.cc" />
+    <ClCompile Include="houghCircle.cc" />
     <ClCompile Include="main.cc" />
     <ClCompile Include="sobel.cc" />
     <ClCompile Include="sobelgui.cc" />

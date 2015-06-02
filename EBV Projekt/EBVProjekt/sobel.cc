@@ -57,7 +57,7 @@ void sobel (Mat_<ushort>& dstImg, const Mat_<uchar>& srcImg)
 #define SOBEL1PXFAST(p, pSrc, sys)\
 {\
 	int sX = (-(int)pSrc[-sys - 1] - ((int)pSrc[-1] << 1) - (int)pSrc[+sys - 1]\
-			 + (int)pSrc[-sys + 1] + ((int)pSrc[1] << 1) + (int)pSrc[+sys + 1] + 3) >> 3;\
+			 + (int)pSrc[-sys + 1] + ((int)pSrc[1]  << 1) + (int)pSrc[+sys + 1] + 3) >> 3;\
 	\
 	int sY = (-(int)pSrc[-sys - 1] - ((int)pSrc[-sys] << 1) - (int)pSrc[-sys + 1]\
 			 + (int)pSrc[+sys - 1] + ((int)pSrc[+sys] << 1) + (int)pSrc[+sys + 1] + 3) >> 3;\
