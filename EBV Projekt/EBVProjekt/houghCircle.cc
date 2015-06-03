@@ -4,7 +4,7 @@ using namespace std;
 
 HoughCircle::Parameters::Parameters()
 // TODO: choose good parameters
- :rMin(0), rMax(0), sobelThreshold(10), houghThreshold(10), radiusHoughThreshold(0), localMaxRange(0)
+ :rMin(0), rMax(50), sobelThreshold(80), houghThreshold(10), radiusHoughThreshold(0), localMaxRange(0)
 
 {
 }
@@ -42,10 +42,19 @@ void HoughCircle::create (int width, int height, const Parameters &param)
 {
     // TODO: implement (2P)
     // Hint: i = (int) round(x), round x to the nearest integer i
+	imgWidth = width; // do we need imgWidth and imgHeight? and is this right?
+	imgHeight = height;
+	houghImgWidth = width;
+	houghImgHeight = height;
+	// create dummy image to determine step size
+	Mat_<ushort> dummyImg(height, width);
+	houghImgWidthStep = dummyImg.step[0] / dummyImg.step[1];
+	//deallocate memory
+	dummyImg.release();
+	// look up tables
+
     assertSobelTab();
     assertRelativeAddressForAngleAndRTab();
-	imgWidth = width;
-	imgHeight = height;
 }
 
 
@@ -64,12 +73,36 @@ Mat_<ushort> HoughCircle::createHoughImage () const
 void HoughCircle::addPointToAccumulator (ushort* houghImgOrigin, int x, int y, int sobelCoded) const
 {
     // TODO: implement (1P)
+	int xc, yc;
+	int sobelX = sobelXUncode(sobelCoded);
+	int sobelY = sobelYUncode(sobelCoded);
+	int sobelLen = sqrt(sq(sobelX)+sq(sobelY));
+
+
 }
 
 
 void HoughCircle::hough (Mat_<ushort>& houghImg, const Mat_<ushort>& sobelImgPrev, const Mat_<ushort>& sobelImg) const
 {
     // TODO: implement (1P)
+	assert("sobelPrev and sobel must have the same size" && sobelImgPrev.rows == sobelImg.rows && sobelImgPrev.cols == sobelImg.cols);
+	const ushort* pLine = nullptr;
+	int sobelX, sobelY, sobelLen, sobelLenPrev;
+
+	for (int y = 0; y < sobelImg.rows; ++y){
+		for (int x = 0; x < sobelImg.cols; ++x){
+			pLine = sobelImg.ptr<ushort>(y);
+			// calculate sobel length of previous sobelImg
+			sobelVector(sobelImgPrev, x, y, sobelX, sobelY);
+			sobelLenPrev = sqrt(sq(sobelX) + sq(sobelY));
+			// calculate sobel length of sobelImg
+			sobelVector(sobelImg, x, y, sobelX, sobelY);
+			sobelLen = sqrt(sq(sobelX) + sq(sobelY));
+			// TODO: > or >= ?!
+			if (sobelLen - sobelLenPrev > param.sobelThreshold)
+				addPointToAccumulator(houghImg.ptr<ushort>(0),x,y,sobelCode(sobelX,sobelY));
+		}
+	}
 }
 
 
@@ -99,7 +132,12 @@ void HoughCircle::findCircles (vector<Circle> &circles, Mat_<ushort>& houghImg, 
 {
     // TODO: implement (1P)
     // Note that a houghImg pixel is \c (ushort)
+
 	circles.clear();
-	ushort *pLine = nullptr;
+	if (houghImg.empty())
+		houghImg = createHoughImage();
+
+	hough(houghImg, sobelPrev, sobel);
+
 }
 
