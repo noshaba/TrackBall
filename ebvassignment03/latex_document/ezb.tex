@@ -25,14 +25,16 @@
 \section{Tag des Modellbaus (4 Punkte)}
 Unter Verwendung der Bildverarbeitung soll ein Zeppelinmodell autonom eine vordefinierte Route über einer Wiese fliegen.\\
 \\
-Um die Orientierung des Zeppelins auf der Wiese zu ermöglichen, werden Markierungen auf der Wiese ausgelegt, welche als Wegpunkte zu interpretieren sind. Die Markierungen haben die Form eines Pfeils und geben somit Aufschluss über die zu fliegende Richtung.\\
-Um diese erfassen zu können, wird unter dem Zeppelin eine Kamera angebracht, die senkrecht nach unten filmt.\\
-Für den Start wird eine besondere Markierung in Form eines Kreuzes eingesetzt. Zu Beginn befindet sich der Zeppelin direkt auf dem Kreuz und schwebt beim Start senkrecht in die Höhe. Anhand der Größe des Kreuzes, welche mit zunehmender Höhe immer weiter abnimmt, kann der Zeppelin feststellen, ob bereits die gewünschte Höhe erreicht wurde.\\
-Ist diese Höhe erreicht, orientiert sich der Zeppelin an einem Arm des Kreuzes, der deutlich Länger ist, um die zu fliegende Richtung zu bestimmen.\\
-Jede durch die Markierungen definierte Richtung zeigt auf den Mittelpunkt (Schwerpunkt) der nächsten Markierung.\\
-Die Markierungen, welche die Wegpunkte beschreiben, sind einfarbig gefärbt und es ist eine bestimmte, sich wiederholende, Farbfolge definiert, wodurch bei mehreren erkannten Markierungen die nächst folgende ausgewählt werden kann.\\
-Zudem sind sie so geformt, dass nicht die gesamte Markierung im Bild erfasst sein muss, um die vorgegebene Richtung zu erfassen. Um dies zu erreichen, sind Anfang und Ende des Pfeils so geformt, dass diese eindeutig erkennbar sind.\\
-Wird eine Markierung erkannt, so nähert sich der Zeppelin dieser Markierung bis zu einem bestimmten Abstand, indem immer wieder die Entfernung zum Bildmittelpunkt bestimmt wird. Hat der Zeppelin einen bestimmten Höchstabstand unterschritten, wird die Richtung der Markierung erfasst und der Zeppelin richtet sich aus. Anschließend fliegt der Zeppelin geradeaus, bis eine weitere Markierung erkannt wird. Solange die vorherige Markierung noch erfassbar ist, wird die Richtung angepasst, falls der Zeppelin vom Kurs abgekommen ist.\\
+Um die Orientierung des Zeppelins auf der Wiese zu ermöglichen, werden Markierungen auf der Wiese ausgelegt, welche als Wegpunkte zu interpretieren sind. Die Markierungen haben die Form eines Pfeils und geben somit Aufschluss über die zu fliegende Richtung.Um diese erfassen zu können, wird unter dem Zeppelin eine Kamera angebracht, die senkrecht nach unten filmt.\\ 
+\linebreak
+Für den Start wird eine besondere Markierung in Form eines Kreuzes eingesetzt. Zu Beginn des Rundflugs befindet sich der Zeppelin direkt auf dem Kreuz und schwebt beim Start senkrecht in die Höhe. Anhand der Größe des Kreuzes, welche mit zunehmender Höhe immer weiter abnimmt, kann der Zeppelin feststellen, ob bereits die gewünschte Höhe erreicht wurde.\\ 
+\linebreak
+Ist diese Höhe erreicht, orientiert sich der Zeppelin an einem Arm des Startkreuzes, der deutlich Länger ist, um die zu fliegende Richtung zu bestimmen. Jede durch die Markierungen definierte Richtung zeigt auf den Mittelpunkt (Schwerpunkt) der nächsten Markierung. Die Markierungen, welche die Wegpunkte beschreiben, sind einfarbig gefärbt und es ist eine bestimmte, sich wiederholende, Farbfolge definiert, wodurch bei mehreren erkannten Markierungen die nächst folgende ausgewählt werden kann.\\ 
+\linebreak
+Zudem sind sie so geformt, dass nicht die gesamte Markierung im Bild erfasst sein muss, um die vorgegebene Richtung zu erfassen. Um dies zu erreichen, sind Anfang und Ende des Pfeils so geformt, dass diese eindeutig erkennbar sind.\\ 
+\linebreak
+Wird eine Markierung erkannt, so nähert sich der Zeppelin dieser Markierung bis zu einem bestimmten Abstand, indem immer wieder die Entfernung zum Bildmittelpunkt bestimmt wird. Hat der Zeppelin einen bestimmten Höchstabstand unterschritten, wird die Richtung der Markierung erfasst und der Zeppelin richtet sich aus. Anschließend fliegt der Zeppelin geradeaus, bis eine weitere Markierung erkannt wird. Solange die vorherige Markierung noch erfassbar ist, wird die Richtung angepasst, falls der Zeppelin vom Kurs abgekommen ist.\\ 
+\linebreak
 Für die Landung wird ein weiteres Kreuz als Markierung eingesetzt, welches jedoch gleichförmig ist. Wird dieses Kreuz erkannt, sinkt der Zeppelin senkrecht.
 
 \section{Spargel, Bildverarbeitung und soziale Realität (1 Bonuspunkt)}
