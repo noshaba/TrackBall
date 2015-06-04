@@ -42,12 +42,13 @@ void HoughCircle::create (int width, int height, const Parameters &param)
 {
     // TODO: implement (2P)
     // Hint: i = (int) round(x), round x to the nearest integer i
-	imgWidth = width; // do we need imgWidth and imgHeight? and is this right?
+	imgWidth = width;
 	imgHeight = height;
-	houghImgWidth = width;
-	houghImgHeight = height;
+	// + 2 * RMAX to not to exceed edges of image
+	houghImgWidth = width + (param.rMax << 1);
+	houghImgHeight = height + (param.rMax << 1);
 	// create dummy image to determine step size
-	Mat_<ushort> dummyImg(height, width);
+	Mat_<ushort> dummyImg(houghImgHeight, houghImgWidth);
 	houghImgWidthStep = dummyImg.step[0] / dummyImg.step[1];
 	//deallocate memory
 	dummyImg.release();
@@ -86,12 +87,15 @@ Mat_<ushort> HoughCircle::createHoughImage () const
 void HoughCircle::addPointToAccumulator (ushort* houghImgOrigin, int x, int y, int sobelCoded) const
 {
     // TODO: implement (1P)
-	int xc, yc;
-	int sobelX = sobelXUncode(sobelCoded);
-	int sobelY = sobelYUncode(sobelCoded);
-	int sobelLen = sqrt(sq(sobelX)+sq(sobelY));
-
-
+	int relAddr;
+	// TODO: Randüberschreitung
+	for (int r = param.rMin; r <= param.rMax; ++r) {
+		relAddr = relativeAddressForAngleAndR[sobelTab[sobelCoded].angle*(param.rMax+1)+r];
+		// along normal
+		houghImgOrigin[ relAddr] += 1;
+		// opposed normal
+		houghImgOrigin[-relAddr] += 1;
+	}
 }
 
 
@@ -105,6 +109,7 @@ void HoughCircle::hough (Mat_<ushort>& houghImg, const Mat_<ushort>& sobelImgPre
 	for (int y = 0; y < sobelImg.rows; ++y){
 		for (int x = 0; x < sobelImg.cols; ++x){
 			pLine = sobelImg.ptr<ushort>(y);
+			// TODO: Make that shit faster
 			// calculate sobel length of previous sobelImg
 			sobelVector(sobelImgPrev, x, y, sobelX, sobelY);
 			sobelLenPrev = sqrt(sq(sobelX) + sq(sobelY));
@@ -113,7 +118,7 @@ void HoughCircle::hough (Mat_<ushort>& houghImg, const Mat_<ushort>& sobelImgPre
 			sobelLen = sqrt(sq(sobelX) + sq(sobelY));
 			// TODO: > or >= ?!
 			if (sobelLen - sobelLenPrev > param.sobelThreshold)
-				addPointToAccumulator(houghImg.ptr<ushort>(0),x,y,sobelCode(sobelX,sobelY));
+				addPointToAccumulator(&(houghImg.ptr<ushort>(param.rMax)[param.rMax]),x,y,sobelCode(sobelX,sobelY));
 		}
 	}
 }
