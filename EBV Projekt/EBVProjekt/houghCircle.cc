@@ -55,7 +55,7 @@ void HoughCircle::create (int width, int height, const Parameters &param)
 	// init sobel angle LUT
 	sobelTab.clear();
 	float angle;
-	for (int x = -128; x < 128; ++x) for (int y = -128; y < 128; ++y) {
+	for (int y = -128; y < 128; ++y) for (int x = -128; x < 128; ++x) {
 		angle = fabs(atan2(y, x))*255.0f / M_PI; // normalize and discretize angle
 		sobelTab.push_back(SobelEntry((int)round(sqrt(sq(x) + sq(y))), (int)round(angle), cos(angle), sin(angle)));
 	}
@@ -91,9 +91,9 @@ void HoughCircle::addPointToAccumulator (ushort* houghImgOrigin, int x, int y, i
 	for (int r = param.rMin; r <= param.rMax; ++r) {
 		relAddr = relativeAddressForAngleAndR[sobelTab[sobelCoded].angle*(param.rMax+1)+r];
 		// along normal
-		++houghImgOrigin[ relAddr];
+		houghImgOrigin[ relAddr] += 1;
 		// opposed normal
-		++houghImgOrigin[-relAddr];
+		houghImgOrigin[-relAddr] += 1;
 	}
 }
 
@@ -159,7 +159,7 @@ void HoughCircle::extractFromHoughImage (vector<Circle>& circles, const Mat_<ush
 	for (int y = 0; y < houghImgHeight; ++y) {
 		pLine = houghImg.ptr<ushort>(y);
 		for (int x = 0; x < houghImgWidth; ++x) {
-			if (pLine[x] >= param.houghThreshold && isLocalMaximum(houghImg, x, y))
+			if (pLine[x] >= param.houghThreshold)
 				// TODO: R Hough accumulator value
 				circles.push_back(Circle(x,y,0,pLine[x],0));
 		}
