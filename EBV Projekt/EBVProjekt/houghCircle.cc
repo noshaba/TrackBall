@@ -91,9 +91,9 @@ void HoughCircle::addPointToAccumulator (ushort* houghImgOrigin, int x, int y, i
 	for (int r = param.rMin; r <= param.rMax; ++r) {
 		relAddr = relativeAddressForAngleAndR[sobelTab[sobelCoded].angle*(param.rMax+1)+r];
 		// along normal
-		houghImgOrigin[ relAddr] += 1;
+		++houghImgOrigin[y * houghImgWidthStep + x + relAddr];
 		// opposed normal
-		houghImgOrigin[-relAddr] += 1;
+		++houghImgOrigin[y * houghImgWidthStep + x - relAddr];
 	}
 }
 
@@ -115,7 +115,7 @@ void HoughCircle::hough (Mat_<ushort>& houghImg, const Mat_<ushort>& sobelImgPre
 			sobelLen = sqrt(sq(sobelX) + sq(sobelY));
 			// TODO: > or >= ?!
 			if ((sobelLen - sobelLenPrev) > param.sobelThreshold)
-				addPointToAccumulator(houghImg.ptr<ushort>(param.rMax + y) + (param.rMax + x), x, y, sobelCode(sobelX, sobelY));
+				addPointToAccumulator(origin, x, y, sobelCode(sobelX, sobelY));
 		}
 	}
 }
@@ -126,9 +126,9 @@ bool HoughCircle::isLocalMaximum (const Mat_<ushort>& houghImg, int xC, int yC) 
     // TODO: implement (2P)
     // Note that a houghImg pixel is \c (ushort)
     // Pixel \c (x,y) of houghImage can be accessed as \c (ushort*) cvPtr2D (houghImg, yC, xC)
-	// TODO: < or <=?
 	const ushort *hLine = nullptr;
 	const ushort *pLine = nullptr;
+	// TODO: < or <=?
 	for (int dy = -param.localMaxRange; dy <= param.localMaxRange; ++dy) {
 		if (yC + dy >= 0 && yC + dy < houghImgHeight){
 			hLine = houghImg.ptr<ushort>(yC);
@@ -159,8 +159,8 @@ void HoughCircle::extractFromHoughImage (vector<Circle>& circles, const Mat_<ush
 	for (int y = 0; y < houghImgHeight; ++y) {
 		pLine = houghImg.ptr<ushort>(y);
 		for (int x = 0; x < houghImgWidth; ++x) {
+			// TODO: R Hough accumulator value and correct center...
 			if (pLine[x] >= param.houghThreshold && isLocalMaximum(houghImg,x,y))
-				// TODO: R Hough accumulator value
 				circles.push_back(Circle(x-param.rMax,y-param.rMax,0,pLine[x],0));
 		}
 	}
