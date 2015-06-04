@@ -4,7 +4,7 @@ using namespace std;
 
 HoughCircle::Parameters::Parameters()
 // TODO: choose good parameters
- :rMin(0), rMax(100), sobelThreshold(1), houghThreshold(100), radiusHoughThreshold(0), localMaxRange(100)
+ :rMin(0), rMax(100), sobelThreshold(10), houghThreshold(10), radiusHoughThreshold(0), localMaxRange(100)
 
 {
 }
@@ -115,7 +115,7 @@ void HoughCircle::hough (Mat_<ushort>& houghImg, const Mat_<ushort>& sobelImgPre
 			sobelLen = sqrt(sq(sobelX) + sq(sobelY));
 			// TODO: > or >= ?!
 			if ((sobelLen - sobelLenPrev) > param.sobelThreshold)
-				addPointToAccumulator(origin,x,y,sobelCode(sobelX,sobelY));
+				addPointToAccumulator(houghImg.ptr<ushort>(param.rMax + y) + (param.rMax + x), x, y, sobelCode(sobelX, sobelY));
 		}
 	}
 }
@@ -159,9 +159,9 @@ void HoughCircle::extractFromHoughImage (vector<Circle>& circles, const Mat_<ush
 	for (int y = 0; y < houghImgHeight; ++y) {
 		pLine = houghImg.ptr<ushort>(y);
 		for (int x = 0; x < houghImgWidth; ++x) {
-			if (pLine[x] >= param.houghThreshold)
+			if (pLine[x] >= param.houghThreshold && isLocalMaximum(houghImg,x,y))
 				// TODO: R Hough accumulator value
-				circles.push_back(Circle(x,y,0,pLine[x],0));
+				circles.push_back(Circle(x-param.rMax,y-param.rMax,0,pLine[x],0));
 		}
 	}
 }
