@@ -4,7 +4,7 @@ using namespace std;
 
 HoughCircle::Parameters::Parameters()
 // TODO: choose good parameters
- :rMin(0), rMax(50), sobelThreshold(80), houghThreshold(10), radiusHoughThreshold(0), localMaxRange(0)
+ :rMin(0), rMax(100), sobelThreshold(1), houghThreshold(100), radiusHoughThreshold(0), localMaxRange(100)
 
 {
 }
@@ -88,13 +88,12 @@ void HoughCircle::addPointToAccumulator (ushort* houghImgOrigin, int x, int y, i
 {
     // TODO: implement (1P)
 	int relAddr;
-	// TODO: Randüberschreitung
 	for (int r = param.rMin; r <= param.rMax; ++r) {
 		relAddr = relativeAddressForAngleAndR[sobelTab[sobelCoded].angle*(param.rMax+1)+r];
 		// along normal
-		houghImgOrigin[ relAddr] += 1;
+		++houghImgOrigin[ relAddr];
 		// opposed normal
-		houghImgOrigin[-relAddr] += 1;
+		++houghImgOrigin[-relAddr];
 	}
 }
 
@@ -103,12 +102,10 @@ void HoughCircle::hough (Mat_<ushort>& houghImg, const Mat_<ushort>& sobelImgPre
 {
     // TODO: implement (1P)
 	assert("sobelPrev and sobel must have the same size" && sobelImgPrev.rows == sobelImg.rows && sobelImgPrev.cols == sobelImg.cols);
-	const ushort* pLine = nullptr;
 	int sobelX, sobelY, sobelLen, sobelLenPrev;
-
-	for (int y = 0; y < sobelImg.rows; ++y){
-		for (int x = 0; x < sobelImg.cols; ++x){
-			pLine = sobelImg.ptr<ushort>(y);
+	ushort* origin = houghImg.ptr<ushort>(param.rMax) + param.rMax;
+	for (int y = 0; y < sobelImg.rows; ++y) {
+		for (int x = 0; x < sobelImg.cols; ++x) {
 			// TODO: Make that shit faster
 			// calculate sobel length of previous sobelImg
 			sobelVector(sobelImgPrev, x, y, sobelX, sobelY);
@@ -117,8 +114,8 @@ void HoughCircle::hough (Mat_<ushort>& houghImg, const Mat_<ushort>& sobelImgPre
 			sobelVector(sobelImg, x, y, sobelX, sobelY);
 			sobelLen = sqrt(sq(sobelX) + sq(sobelY));
 			// TODO: > or >= ?!
-			if (sobelLen - sobelLenPrev > param.sobelThreshold)
-				addPointToAccumulator(&(houghImg.ptr<ushort>(param.rMax)[param.rMax]),x,y,sobelCode(sobelX,sobelY));
+			if ((sobelLen - sobelLenPrev) > param.sobelThreshold)
+				addPointToAccumulator(origin,x,y,sobelCode(sobelX,sobelY));
 		}
 	}
 }
@@ -129,20 +126,44 @@ bool HoughCircle::isLocalMaximum (const Mat_<ushort>& houghImg, int xC, int yC) 
     // TODO: implement (2P)
     // Note that a houghImg pixel is \c (ushort)
     // Pixel \c (x,y) of houghImage can be accessed as \c (ushort*) cvPtr2D (houghImg, yC, xC)
- return false;
+	// TODO: < or <=?
+	const ushort *hLine = nullptr;
+	const ushort *pLine = nullptr;
+	for (int dy = -param.localMaxRange; dy <= param.localMaxRange; ++dy) {
+		if (yC + dy >= 0 && yC + dy < houghImgHeight){
+			hLine = houghImg.ptr<ushort>(yC);
+			pLine = houghImg.ptr<ushort>(yC + dy);
+			for (int dx = -param.localMaxRange; dx <= param.localMaxRange; ++dx) {
+				if (xC + dx >= 0 && xC + dx < houghImgWidth &&
+					hLine[xC] < pLine[xC + dx])
+					return false;
+			}
+		}
+	}
+	return true;
 }
 
 
 int HoughCircle::findBestRadius (const Mat_<ushort>& sobelImg, int xC, int yC, int& bestR) const
 {
     // TODO: implement (2P)
- return 0;
+	return 0;
 }
 
 
 void HoughCircle::extractFromHoughImage (vector<Circle>& circles, const Mat_<ushort>& houghImg, const Mat_<ushort>& sobelImg) const
 {
     // TODO: implement (1P)
+	circles.clear();
+	const ushort* pLine = nullptr;
+	for (int y = 0; y < houghImgHeight; ++y) {
+		pLine = houghImg.ptr<ushort>(y);
+		for (int x = 0; x < houghImgWidth; ++x) {
+			if (pLine[x] >= param.houghThreshold && isLocalMaximum(houghImg, x, y))
+				// TODO: R Hough accumulator value
+				circles.push_back(Circle(x,y,0,pLine[x],0));
+		}
+	}
 }
 
 
@@ -150,12 +171,9 @@ void HoughCircle::findCircles (vector<Circle> &circles, Mat_<ushort>& houghImg, 
 {
     // TODO: implement (1P)
     // Note that a houghImg pixel is \c (ushort)
-
-	circles.clear();
 	if (houghImg.empty())
 		houghImg = createHoughImage();
-
 	hough(houghImg, sobelPrev, sobel);
-
+	extractFromHoughImage(circles, houghImg, sobel);
 }
 
