@@ -51,9 +51,22 @@ void HoughCircle::create (int width, int height, const Parameters &param)
 	houghImgWidthStep = dummyImg.step[0] / dummyImg.step[1];
 	//deallocate memory
 	dummyImg.release();
-	// look up tables
-
-    assertSobelTab();
+	// init sobel angle LUT
+	sobelTab.clear();
+	float angle;
+	for (int x = -128; x < 128; ++x) for (int y = -128; y < 128; ++y) {
+		angle = fabs(atan2(y, x))*255.0f / M_PI; // normalize and discretize angle
+		sobelTab.push_back(SobelEntry((int)round(sqrt(sq(x) + sq(y))), (int)round(angle), cos(angle), sin(angle)));
+	}
+	// init relative address LUT
+	relativeAddressForAngleAndR.clear();
+	int dX, dY;
+	for (int angle = 0; angle < Parameters::NR_OF_ORIENTATIONS; ++angle) for (int r = 0; r <= param.rMax; ++r){
+		dX = r * cos(angle);
+		dY = r * sin(angle);
+		relativeAddressForAngleAndR.push_back(dX + houghImgWidthStep * dY);
+	}
+	assertSobelTab();
     assertRelativeAddressForAngleAndRTab();
 }
 
