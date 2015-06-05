@@ -21,21 +21,31 @@
 
 %-------Text-Start------------------------------------------
 \section{Ballspiele I (10 Punkte)}
-
+\newpage
 \section{Tag des Modellbaus (4 Punkte)}
 Unter Verwendung der Bildverarbeitung soll ein Zeppelinmodell, autonom eine vordefinierte Route über einer Wiese fliegen.\\
 \linebreak
 Um die Orientierung des Zeppelins auf der Wiese zu ermöglichen, werden Markierungen auf der Wiese ausgelegt, welche als Wegpunkte zu interpretieren sind. Die Markierungen haben die Form eines Pfeils und geben somit Aufschluss über die zu fliegende Richtung.Um diese erfassen zu können, wird unter dem Zeppelin eine Kamera angebracht, die senkrecht nach unten filmt (siehe Abb. \ref{fig1}).\\ 
 \begin{figure}[h]
 	\centering
-  \includegraphics{richtungspfeil.png}
+  \includegraphics[scale=0.7]{richtungspfeil.png}
 	\caption{Beispiel eines Markierungspfeils für die Bewegungsvorgabe des Zeppelins.}
 	\label{fig1}
 \end{figure}
 \linebreak
-Für den Start wird eine besondere runde Markierung eingesetzt. Zu Beginn des Rundflugs befindet sich der Zeppelin direkt auf dem Kreis und schwebt beim Start senkrecht in die Höhe. Anhand der Größe des Kreises, welche mit zunehmender Höhe immer weiter abnimmt, kann der Zeppelin feststellen, ob bereits die gewünschte Höhe erreicht wurde.\\ 
+\begin{wrapfigure}{r}{0.2\textwidth}
+\includegraphics[width=0.15\textwidth]{regelkreis.png}
+\caption{\label{fig:kreis}Start-Markierung}
+\end{wrapfigure}
+Für den Start wird eine besondere runde Markierung eingesetzt. Zu Beginn des Rundflugs befindet sich der Zeppelin direkt auf dem Kreis und schwebt beim Start senkrecht in die Höhe.\\ Anhand der Größe des Kreises, welche mit zunehmender Höhe immer weiter abnimmt, kann der Zeppelin feststellen, ob bereits die gewünschte Höhe erreicht wurde.\\
 \linebreak
-Ist diese Höhe erreicht, orientiert sich der Zeppelin an einem Strich, welcher vom Kreisrand bis zur Mitte des Kreises gezeichnet ist. Dieser Strich gibt die initiale Richtung an. Jede durch die Markierungen definierte Richtung zeigt auf den Mittelpunkt (Schwerpunkt) der nächsten Markierung. Die Markierungen, welche die Wegpunkte beschreiben, sind einfarbig gefärbt und es ist eine bestimmte, sich wiederholende, Farbfolge definiert, wodurch bei mehreren erkannten Markierungen die nächst folgende ausgewählt werden kann.\\ 
+Ist diese Höhe erreicht, orientiert sich der Zeppelin an einem Strich, welcher vom Kreisrand bis zur Mitte des Kreises gezeichnet ist. Dieser Strich gibt die initiale Richtung an (siehe Abb. \ref{fig:kreis}). Jede durch die Markierungen definierte Richtung zeigt auf den Mittelpunkt (Schwerpunkt) der nächsten Markierung. Die Markierungen, welche die Wegpunkte beschreiben, sind einfarbig gefärbt und es ist eine bestimmte, sich wiederholende, Farbfolge definiert, wodurch bei mehreren erkannten Markierungen die nächst folgende ausgewählt werden kann (siehe Abb. \ref{fig:farbfolge}).\\
+\begin{figure}[h]
+	\centering
+  \includegraphics[scale=0.5]{richtungspfeileAufWieseBunt.png}
+	\caption{Beispiel einer Farbfolge}
+	\label{fig:farbfolge}
+\end{figure}
 \linebreak
 Zudem sind sie so geformt, dass nicht die gesamte Markierung im Bild erfasst sein muss, um die vorgegebene Richtung zu erfassen. Um dies zu erreichen, sind Anfang und Ende des Pfeils so geformt, dass diese eindeutig erkennbar sind (siehe Abb. \ref{fig1}).\\ 
 \linebreak
@@ -43,7 +53,7 @@ Wird eine Markierung erkannt, richtet sich der Zeppelin entsprechend seine Vorga
 \linebreak 
 Beim Einbau der Kamera ist davon auszugehen, dass deren vertikalen und horizontalen Achsen nicht senkrecht bzw. parallel zur Bewegungsrichtung verlaufen, wofür die Kamera vor Inbetriebnahme zunächst kalibriert werden muss.\\
 \linebreak
-Da nach diesen Vorgaben oft nachgesteuert wird, empfiehlt es sich die Bewegungsvorgabe mit einem Regler anzusteuern, um eventuellen Schwingzuständen entegegen zu wirken.    \\ 
+Da nach diesen Vorgaben oft nachgesteuert wird, empfiehlt es sich die Bewegungsvorgabe mit einem Regler anzusteuern, um eventuellen Schwingzuständen entegegen zu wirken.\\ 
 \linebreak
 Für die Landung wird ein weiterer Kreis als Markierung eingesetzt, in welchen jedoch kein Strich eingezeichnet sein muss. Es kann sich bei diesem Kreis auch um den selben Kreis handeln, von dem aus gestartet wurde. Wird dieser Kreis erkannt, sinkt der Zeppelin senkrecht.
 
