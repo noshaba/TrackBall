@@ -21,6 +21,205 @@
 
 %-------Text-Start------------------------------------------
 \section{Ballspiele I (10 Punkte)}
+\begin{lstlisting}[language=C++]
+
+HoughCircle::Parameters::Parameters()
+ :rMin(10), rMax(15), sobelThreshold(7), houghThreshold(7), radiusHoughThreshold(0), localMaxRange(100)
+{
+	// so that findBestRadius and other functions do not have a buffer overflow
+	if (rMin < 0) rMin = 0;
+	if (rMax < 0) rMax = 0;
+}
+
+void HoughCircle::create (int width, int height, const Parameters &param)
+{
+    // implement (2P)
+	imgWidth = width;
+	imgHeight = height;
+	// + 2 * RMAX to not to exceed edges of image
+	houghImgWidth = width + (param.rMax << 1);
+	houghImgHeight = height + (param.rMax << 1);
+	// create dummy image to determine step size
+	Mat_<ushort> dummyImg(houghImgHeight, houghImgWidth);
+	houghImgWidthStep = dummyImg.step[0] / dummyImg.step[1];
+	//deallocate memory
+	dummyImg.release();
+	// init sobel angle LUT
+	sobelTab.clear();
+	float angle, ang;
+	for (int y = -128; y < 128; ++y) for (int x = -128; x < 128; ++x) {
+		ang = atan2(y, x);
+		angle = fabs(ang) * 255.0f / M_PI; // normalize and discretize angle
+		sobelTab.push_back(SobelEntry((int)round(sqrt(sq(x) + sq(y))), (int) round(angle), cos(ang), sin(ang)));
+	}
+	// init relative address LUT
+	relativeAddressForAngleAndR.clear();
+	int dX, dY;
+	for (int angle = 0; angle < Parameters::NR_OF_ORIENTATIONS; ++angle) for (int r = 0; r <= param.rMax; ++r){
+		dX = r * cos(angle);
+		dY = r * sin(angle);
+		relativeAddressForAngleAndR.push_back(dX + houghImgWidthStep * dY);
+	}
+	// error handling
+	assertSobelTab();
+    assertRelativeAddressForAngleAndRTab();
+}
+
+void HoughCircle::addPointToAccumulator (ushort* houghImgOrigin, int x, int y, int sobelCoded) const
+{
+    // implement (1P)
+	int relAddr;
+	for (int r = param.rMin; r <= param.rMax; ++r) {
+		relAddr = relativeAddressForAngleAndR[sobelTab[sobelCoded].angle*(param.rMax+1)+r];
+		// along normal
+		houghImgOrigin[y * houghImgWidthStep + x + relAddr]++;
+		// opposed normal
+		houghImgOrigin[y * houghImgWidthStep + x - relAddr]++;
+	}
+}
+\end{lstlisting}
+
+\newpage
+\begin{lstlisting}[language=C++]
+void HoughCircle::hough (Mat_<ushort>& houghImg, const Mat_<ushort>& sobelImgPrev, const Mat_<ushort>& sobelImg) const
+{
+    // implement (1P)
+	// error handling
+	assert("sobelPrev and sobel must have the same size" && sobelImgPrev.rows == sobelImg.rows && sobelImgPrev.cols == sobelImg.cols);
+	int sobelLen, sobelLenPrev;
+	// calculate origin of hough image
+	ushort* origin = houghImg.ptr<ushort>(param.rMax)+param.rMax;
+	// for more performance
+	#pragma omp for
+	for (int y = 0; y < sobelImg.rows; ++y) {
+		for (int x = 0; x < sobelImg.cols; ++x) {
+			// calculate sobel length of previous sobelImg
+			sobelLenPrev = sobelTab[sobelImgPrev(y, x)].length;
+			// calculate sobel length of sobelImg
+			sobelLen = sobelTab[sobelImg(y, x)].length;
+			// wasn't sure if > or >= since in line 97 in the header "exceed" is written
+			// but in line 22 it says it ignore every value below sobelThreshold
+			if ((sobelLen - sobelLenPrev) > param.sobelThreshold)
+				addPointToAccumulator(origin, x, y, sobelImg(y,x));
+		}
+	}
+}
+
+
+bool HoughCircle::isLocalMaximum (const Mat_<ushort>& houghImg, int xC, int yC) const
+{
+    // implement (2P)
+	const ushort *hLine = nullptr;
+	const ushort center = houghImg.ptr<ushort>(yC)[xC];
+	// [+localMaxRange,-localMaxRange]
+	for (int dy = -param.localMaxRange; dy <= param.localMaxRange; ++dy) {
+		// check if no edge exceeding
+		if (yC + dy >= 0 && yC + dy < houghImgHeight){
+			hLine = houghImg.ptr<ushort>(yC);
+			hLine = houghImg.ptr<ushort>(yC + dy);
+			for (int dx = -param.localMaxRange; dx <= param.localMaxRange; ++dx) {
+				// check if no edge exceeding and return false if greater value was found
+				if (xC + dx >= 0 && xC + dx < houghImgWidth &&
+					center < hLine[xC + dx])
+					return false;
+			}
+		}
+	}
+	return true;
+}
+
+\end{lstlisting}
+\newpage
+\begin{lstlisting}[language=C++]
+int HoughCircle::findBestRadius (const Mat_<ushort>& sobelImg, int xC, int yC, int& bestR) const
+{
+    // implement (2P)
+
+	// init hough R
+	std::vector<int> houghR;
+	for (int r = 0; r <= param.rMax; ++r)
+		houghR.push_back(0);
+
+	// increase houghR at r if fitting value was found
+	SobelEntry s;
+	int r; float d;
+	for (int dY = -param.rMax; dY <= param.rMax; dY++)
+		for (int dX = -param.rMax; dX <= param.rMax; dX++) {
+			// check for edge exceeding
+			if (xC + dX >= 0 && xC + dX < sobelImg.cols &&
+				yC + dY >= 0 && yC + dY < sobelImg.rows) {
+				s = sobelTab[sobelImg(yC + dY, xC + dX)];
+				// calculate radius
+				r = fabs(s.cosAngle *dX + s.sinAngle*dY);
+				d = fabs(-s.sinAngle*dX + s.cosAngle*dY);
+				if (d <= 1 && s.length > param.sobelThreshold && r <= param.rMax)
+					houghR[r]++; // increase if good value
+			}
+		}
+
+	// find best radius and valueR
+	bestR = param.rMin;
+	int bestVal = 0;
+	for (int r = param.rMin; r <= param.rMax; r++) {
+		if (houghR[r]>houghR[bestR]) { 
+			bestR = r; 
+			bestVal = houghR[r];
+		}
+	}
+
+	return bestVal;
+}
+
+
+void HoughCircle::extractFromHoughImage (vector<Circle>& circles, const Mat_<ushort>& houghImg, const Mat_<ushort>& sobelImg) const
+{
+    // implement (1P)
+	circles.clear();
+	const ushort* pLine = nullptr;
+	int bestR;
+	int valueR;
+	// starts at +RMAX and ends at end-RMAX because the hough room is 2*RMAX in both dimensions
+	// greater than the original image
+	for (int y = param.rMax; y < houghImgHeight - param.rMax; ++y) {
+		pLine = houghImg.ptr<ushort>(y);
+		for (int x = param.rMax; x < houghImgWidth - param.rMax; ++x) {
+			// find a high enough entry as center
+			if (pLine[x] >= param.houghThreshold && isLocalMaximum(houghImg, x, y)) {
+				valueR = findBestRadius(sobelImg, x, y, bestR);
+				// entry has to be at least radiusHoughThreshold (line 25 in header)
+				if (valueR >= param.radiusHoughThreshold)
+					// calculate hough img coordinated to original img coordinates
+					circles.push_back(Circle(x - param.rMax, y - param.rMax, bestR, pLine[x], valueR));
+			}
+		}
+	}
+}
+\end{lstlisting}
+\newpage
+\begin{lstlisting}[language=C++]
+
+void HoughCircle::findCircles (vector<Circle> &circles, Mat_<ushort>& houghImg, const Mat_<ushort>& sobelPrev, const Mat_<ushort>& sobel) const
+{
+    // implement (1P)
+	// error handling
+	assert("sobel images must be the same size" && sobel.cols == sobelPrev.cols && sobel.rows == sobelPrev.rows);
+	circles.clear();
+	// create hough image if not allocated
+	if (houghImg.empty())
+		houghImg = createHoughImage();
+	#pragma omp parallel
+	{
+		// apply hough transform
+		hough(houghImg, sobelPrev, sobel);
+	}
+	// create circle out of transform
+	extractFromHoughImage(circles, houghImg, sobel);
+}
+
+\end{lstlisting}
+
+
+
 \newpage
 \section{Tag des Modellbaus (4 Punkte)}
 Unter Verwendung der Bildverarbeitung soll ein Zeppelinmodell, autonom eine vordefinierte Route über einer Wiese fliegen.\\
