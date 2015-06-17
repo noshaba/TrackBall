@@ -85,20 +85,28 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="cameraCalibration.h" />
     <ClInclude Include="central.h" />
+    <ClInclude Include="geometry.h" />
     <ClInclude Include="gui.h" />
     <ClInclude Include="hcgui.h" />
     <ClInclude Include="houghCircle.h" />
+    <ClInclude Include="particleFilter.h" />
     <ClInclude Include="sobel.h" />
     <ClInclude Include="sobelgui.h" />
+    <ClInclude Include="trackGui.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="cameraCalibration.cc" />
+    <ClCompile Include="geometry.cc" />
     <ClCompile Include="gui.cc" />
     <ClCompile Include="hcgui.cc" />
     <ClCompile Include="houghCircle.cc" />
     <ClCompile Include="main.cc" />
+    <ClCompile Include="particleFilter.cc" />
     <ClCompile Include="sobel.cc" />
     <ClCompile Include="sobelgui.cc" />
+    <ClCompile Include="trackGui.cc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

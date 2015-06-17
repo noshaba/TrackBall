@@ -36,6 +36,18 @@
     <ClInclude Include="hcgui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cameraCalibration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="geometry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="particleFilter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="trackGui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="gui.cc">
@@ -50,10 +62,22 @@
     <ClCompile Include="sobelgui.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="houghCircle.cc">
+    <ClCompile Include="hcgui.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="hcgui.cc">
+    <ClCompile Include="cameraCalibration.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="geometry.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="particleFilter.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="trackGui.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="houghCircle.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
