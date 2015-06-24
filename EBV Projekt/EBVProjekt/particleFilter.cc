@@ -33,7 +33,6 @@ void ParticleFilter::Particle::observeInit (double x, double y, double r)
 		pCenterY = filter->camera.centerY,
 		alpha = filter->camera.alpha,
 		radius = filter->param.ballRadius,
-		iDT = 1.0 / filter->param.deltaT,
 		Z = alpha * radius / r;
 
 	double iX = pCenterX + alpha / Z * x;
@@ -44,15 +43,18 @@ void ParticleFilter::Particle::observeInit (double x, double y, double r)
 
 	if (filter->camera.generate(position, pX, pY, r, radius)) {
 		state = POSITIONDEFINED;
+		timeOfLastObservation = time;
 
 		double dT = time - timeOfLastObservation;
 		if (dT > filter->param.waitUntilSecondObservation) {
-			double vX = iDT * (pX - Z / alpha * (iX + randomGaussian() - pCenterX));
-			double vY = iDT * (pY - Z / alpha * (iY + randomGaussian() - pCenterY));
+			double vX = 1.0 / dT * (pX - Z / alpha * (iX + randomGaussian() - pCenterX));
+			double vY = 1.0 / dT * (pY - Z / alpha * (iY + randomGaussian() - pCenterY));
 			filter->camera.generate(velocity, vX, vY, r, radius);
 			state = FULLDEFINED;
-			timeOfLastObservation = time;
 		}
+	}
+	else {
+		weight = 0;
 	}
 }
 
