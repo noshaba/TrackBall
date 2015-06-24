@@ -4,7 +4,7 @@
 
 ParticleFilter::Parameters::Parameters ()
 // TODO: choose good parameter (1P)
-:ballRadius(0.02), sigmaVelocity(0), sigmaImage(0), deltaT(0), waitUntilSecondObservation(0), nrOfParticles(100)
+:ballRadius(0.02), sigmaVelocity(0), sigmaImage(0), deltaT(1.0 / 25), waitUntilSecondObservation(0.1), nrOfParticles(10)
 {
   g[0] = 0;
   g[1] = 0;  
@@ -32,16 +32,27 @@ void ParticleFilter::Particle::observeInit (double x, double y, double r)
 		pCenterX = filter->camera.centerX,
 		pCenterY = filter->camera.centerY,
 		alpha = filter->camera.alpha,
-		Z = alpha * filter->param.ballRadius / r;
+		radius = filter->param.ballRadius,
+		iDT = 1.0 / filter->param.deltaT,
+		Z = alpha * radius / r;
 
 	double iX = pCenterX + alpha / Z * x;
 	double iY = pCenterY + alpha / Z * y;
 
-	double xInCamera = Z / alpha * (iX + randomGaussian() - pCenterX);
-	double yInCamera = Z / alpha * (iY + randomGaussian() - pCenterY);
+	double pX = Z / alpha * (iX + randomGaussian() - pCenterX);
+	double pY = Z / alpha * (iY + randomGaussian() - pCenterY);
 
-	if (filter->camera.generate(position, xInCamera, yInCamera, r, filter->param.ballRadius)){
+	if (filter->camera.generate(position, pX, pY, r, radius)) {
 		state = POSITIONDEFINED;
+
+		double dT = time - timeOfLastObservation;
+		if (dT > filter->param.waitUntilSecondObservation) {
+			double vX = iDT * (pX - Z / alpha * (iX + randomGaussian() - pCenterX));
+			double vY = iDT * (pY - Z / alpha * (iY + randomGaussian() - pCenterY));
+			filter->camera.generate(velocity, vX, vY, r, radius);
+			state = FULLDEFINED;
+			timeOfLastObservation = time;
+		}
 	}
 }
 
