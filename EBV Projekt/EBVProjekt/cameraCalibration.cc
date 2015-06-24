@@ -10,15 +10,13 @@
 int CameraCalibration::project (double& x, double& y, const VVector& pInWorld) const
 {
   // TODO: implement (1P)
-	Transform inverseCameraInWorld;
-	inverse(inverseCameraInWorld, cameraInWorld);
-	VVector pInCamera = inverseCameraInWorld * pInWorld;
+	Transform worldInCamera;
+	inverse(worldInCamera, cameraInWorld);
+	VVector pInCamera = worldInCamera * pInWorld;
 
 	// check if behind camera
 	int inside = pInCamera[2] > 0 ? 1 : 0;
 
-	// no K_1 or K_2?!
-	// what to do if z == 0?! division by 0, is this even necessary since point is behind camera?
 	x = centerX + alpha * pInCamera[0] / pInCamera[2];
 	y = centerY + alpha * pInCamera[1] / pInCamera[2];
 
@@ -32,14 +30,19 @@ int CameraCalibration::project (double& x, double& y, const VVector& pInWorld) c
 int CameraCalibration::project (double& x, double& y, double& r, const VVector& pInWorld, double radius) const
 {
   // TODO: implement (1P)
-	int inside = project(x,y,pInWorld);
+	Transform worldInCamera;
+	inverse(worldInCamera, cameraInWorld);
+	VVector pInCamera = worldInCamera * pInWorld;
 
-	double x_r, y_r;
-	project(x_r, y_r, pInWorld + VVector(radius,0,0,0));
-	x_r -= x;
-	y_r -= y;
+	// check if behind camera
+	int inside = pInCamera[2] > 0 ? 1 : 0;
 
-	r = sqrt(x_r*x_r+y_r*y_r);
+	x = centerX + alpha * pInCamera[0] / pInCamera[2];
+	y = centerY + alpha * pInCamera[1] / pInCamera[2];
+	r = alpha * radius / pInCamera[2];
+
+	// check if inside image
+	inside = isInside(x, y) ? 2 : inside;
 
 	return inside;
 }
@@ -48,7 +51,22 @@ int CameraCalibration::project (double& x, double& y, double& r, const VVector& 
 bool CameraCalibration::generate (VVector& pInWorld, double x, double y, double r, double radius) const
 {
 // TODO: implement (1P)
- return false;
+	if(r <= 0) return false;
+
+	VVector pInCamera;
+	pInCamera[3] = 1;
+	pInCamera[2] = alpha * radius / r;
+	pInCamera[1] = (y - centerY) * pInCamera[2] / alpha;
+	pInCamera[0] = (x - centerX) * pInCamera[2] / alpha;
+
+	pInWorld = cameraInWorld * pInCamera;
+
+	// check if input of generate is equal to output of project
+	double xImage, yImage, rImage;
+	project(xImage, yImage, rImage, pInWorld, radius);
+	assert("project(generate(INPUT)) must be equal to INPUT!" && 
+		fabs(x - xImage) + fabs(y - yImage) + fabs(r - rImage) < 0.1);
+	return true;
 }
 
 

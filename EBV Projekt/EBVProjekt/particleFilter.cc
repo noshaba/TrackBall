@@ -4,7 +4,7 @@
 
 ParticleFilter::Parameters::Parameters ()
 // TODO: choose good parameter (1P)
-  :ballRadius(0), sigmaVelocity(0), sigmaImage(0), deltaT(0), waitUntilSecondObservation(0), nrOfParticles(0)
+:ballRadius(0.02), sigmaVelocity(0), sigmaImage(0), deltaT(0), waitUntilSecondObservation(0), nrOfParticles(100)
 {
   g[0] = 0;
   g[1] = 0;  
@@ -28,6 +28,21 @@ double ParticleFilter::randomGaussian ()
 void ParticleFilter::Particle::observeInit (double x, double y, double r)
 {
     // TODO: implement (2P)
+	double
+		pCenterX = filter->camera.centerX,
+		pCenterY = filter->camera.centerY,
+		alpha = filter->camera.alpha,
+		Z = alpha * filter->param.ballRadius / r;
+
+	double iX = pCenterX + alpha / Z * x;
+	double iY = pCenterY + alpha / Z * y;
+
+	double xInCamera = Z / alpha * (iX + randomGaussian() - pCenterX);
+	double yInCamera = Z / alpha * (iY + randomGaussian() - pCenterY);
+
+	if (filter->camera.generate(position, xInCamera, yInCamera, r, filter->param.ballRadius)){
+		state = POSITIONDEFINED;
+	}
 }
 
 
@@ -60,12 +75,17 @@ void ParticleFilter::Particle::dynamic (double deltaT)
 void ParticleFilter::observe (double x, double y, double r)
 {
   // TODO: implement (included with Particle::observe)
+	for (int i = 0; i < particle.size(); ++i)
+		particle[i].observe(x, y, r);
 }
 
 
 void ParticleFilter::createSamples (int nrOfParticles)
 {
     // TODO: implement (included with ParticleFilter::Parameters::Parameters)
+	double weight = 1.0 / nrOfParticles;
+	for (int i = 0; i < nrOfParticles; ++i)
+		particle.push_back(Particle(this, weight));
 }
 
 
