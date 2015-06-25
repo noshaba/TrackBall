@@ -4,7 +4,7 @@
 
 ParticleFilter::Parameters::Parameters ()
 // TODO: choose good parameter (1P)
-:ballRadius(0.02), sigmaVelocity(0.5), sigmaImage(0), deltaT(1.0 / 25), waitUntilSecondObservation(0.1), nrOfParticles(100)
+:ballRadius(0.1), sigmaVelocity(0.5), sigmaImage(2), deltaT(1.0 / 25), waitUntilSecondObservation(0.125), nrOfParticles(200)
 {
   g[0] = 0;
   g[1] = 0;  
@@ -28,44 +28,45 @@ double ParticleFilter::randomGaussian ()
 void ParticleFilter::Particle::observeInit (double x, double y, double r)
 {
     // TODO: implement (2P)
-	double
-		pCenterX = filter->camera.centerX,
-		pCenterY = filter->camera.centerY,
-		alpha = filter->camera.alpha,
-		radius = filter->param.ballRadius,
-		Z = alpha * radius / r;
-
-	double iX = pCenterX + alpha / Z * x;
-	double iY = pCenterY + alpha / Z * y;
-
-	double pX = Z / alpha * (iX + randomGaussian() - pCenterX);
-	double pY = Z / alpha * (iY + randomGaussian() - pCenterY);
-
-	if (filter->camera.generate(position, pX, pY, r, radius)) {
-		if (state == POSITIONDEFINED){
+	double sigma = filter->param.sigmaImage;
+	VVector p;
+	// TODP: multiply rndGauss with sigma or not?
+	x += randomGaussian();
+	y += randomGaussian();
+	r += randomGaussian();
+	if (filter->camera.generate(p, x, y, r, filter->param.ballRadius)) {
+		if (state == POSITIONDEFINED) {
 			double dT = time - timeOfLastObservation;
 			if (dT > filter->param.waitUntilSecondObservation) {
-				double vX = 1.0 / dT * (pX - Z / alpha * (iX + randomGaussian() - pCenterX));
-				double vY = 1.0 / dT * (pY - Z / alpha * (iY + randomGaussian() - pCenterY));
-				filter->camera.generate(velocity, vX, vY, r, radius);
+				velocity = (p - position) / dT + filter->param.g * dT * .5; // TODO: add acceleration or not?
+				position = p;
 				state = FULLDEFINED;
 				timeOfLastObservation = time;
 			}
 		}
 		else {
+			position = p;
 			state = POSITIONDEFINED;
 			timeOfLastObservation = time;
 		}
 	}
-	else {
-		weight = 0;
-	}
+	// is weighting allows in observe?
+	else weight = 0;
+	if (position[2] < 0) weight = 0;
 }
 
 
 void ParticleFilter::Particle::observeRegular (double x, double y, double r)
 {
     // TODO: implement (1P)
+	double dx, dy, dr, sigma = filter->param.sigmaImage;
+	if (!filter->camera.project(dx, dy, dr, position, filter->param.ballRadius)) weight = 0;
+	dx = x - dx;
+	dy = y - dy;
+	dr = r - dr;
+	weight *= exp(-(dx*dx + dy*dy + dr*dr) / (2*sigma*sigma));
+	timeOfLastObservation = time;
+	if (position[2] < 0) weight = 0; // is this allowed in observe?
 }
 
 
@@ -73,15 +74,14 @@ void ParticleFilter::Particle::observeRegular (double x, double y, double r)
 void ParticleFilter::Particle::observe (double x, double y, double r)
 {
     if (state==FULLDEFINED) observeRegular(x, y, r);
-    else observeInit (x, y, r);
+   else observeInit (x, y, r);
 }
 
 
 void ParticleFilter::dynamic ()
 {
     // TODO: implement (included with Particle::dynamic)
-	for (int i = 0; i < particle.size(); ++i) 
-		// TODO: really param.deltaT?!
+	for (int i = 0; i < particle.size(); ++i)
 		particle[i].dynamic(param.deltaT);
 }
 
@@ -91,8 +91,11 @@ void ParticleFilter::Particle::dynamic (double deltaT)
 	// TODO: implement (2P)
 	if (state == FULLDEFINED) {
 		VVector ones = { 1, 1, 1, 0 };
+		VVector n = { randomGaussian(), randomGaussian(), randomGaussian(), 0};
 		position += (deltaT * velocity + deltaT * deltaT * filter->param.g * .5).mul(ones); // mul = element wise multiplication
-		velocity += (deltaT * filter->param.g + filter->param.sigmaVelocity * sqrt(deltaT) * randomGaussian() * ones).mul(ones);
+		// isn't vectorized acceleration better than an acceleration scalar (in lectures) 
+		// since no check for length of vector is needed??
+		velocity += (deltaT * filter->param.g + filter->param.sigmaVelocity * sqrt(deltaT) * n).mul(ones);
 	}
 	time += deltaT;
 }
