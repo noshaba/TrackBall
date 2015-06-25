@@ -50,9 +50,8 @@ void ParticleFilter::Particle::observeInit (double x, double y, double r)
 			timeOfLastObservation = time;
 		}
 	}
-	// is weighting allows in observe?
+	// is weighting allowed in init?
 	else weight = 0;
-	if (position[2] < 0) weight = 0;
 }
 
 
@@ -61,12 +60,13 @@ void ParticleFilter::Particle::observeRegular (double x, double y, double r)
     // TODO: implement (1P)
 	double dx, dy, dr, sigma = filter->param.sigmaImage;
 	if (!filter->camera.project(dx, dy, dr, position, filter->param.ballRadius)) weight = 0;
-	dx = x - dx;
-	dy = y - dy;
-	dr = r - dr;
-	weight *= exp(-(dx*dx + dy*dy + dr*dr) / (2*sigma*sigma));
+	else {
+		dx = x - dx;
+		dy = y - dy;
+		dr = r - dr;
+		weight *= exp(-(dx*dx + dy*dy + dr*dr) / (2 * sigma*sigma));
+	}
 	timeOfLastObservation = time;
-	if (position[2] < 0) weight = 0; // is this allowed in observe?
 }
 
 
@@ -121,5 +121,33 @@ void ParticleFilter::createSamples (int nrOfParticles)
 void ParticleFilter::resample (int nrOfParticles)
 {
     // TODO: implement (1P)
+	double totalWeight = 0, weightUpToJ = 0;
+	int j = -1;
+	vector<Particle> pNew;
+
+	for (int i = 0; i < particle.size(); ++i)
+		totalWeight += particle[i].weight;
+
+	double normWeight = totalWeight / nrOfParticles, unitWeight = 1.0 / nrOfParticles;
+	double weightChosen = randomUniform() * normWeight;
+
+	for (int i = 0; i < nrOfParticles; i++) {
+		// why doesn't the solution from the lecture work?!
+	/*	while (weightChosen >= weightUpToJ) {
+			j++;
+			weightUpToJ += particle[i].weight;
+		}
+		pNew.push_back(particle[j]);
+		pNew.back().weight = unitWeight;
+		weightChosen += normWeight;*/
+		weightChosen -= particle[i].weight;
+		while (weightChosen <= 0) {
+			pNew.push_back(particle[i]);
+			pNew.back().weight = unitWeight;
+			weightChosen += normWeight;
+		}
+	}
+	assert("Resampled particles must have the size of nrOfParticles" && pNew.size() == nrOfParticles);
+	particle = pNew;
 }
 
