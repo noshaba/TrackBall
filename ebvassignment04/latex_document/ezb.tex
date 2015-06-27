@@ -119,11 +119,43 @@ Da beim Fußball schon wenige cm entscheidend sind, sollte der einzusetzende Alg
 \section{Der einäugige Ballfangkönig (1 Punkt)}
 Um den Skalenmaßstab aus den Messungen zu bestimmen, soll eine Analyse der Situation durchgeführt werden. Zum einen lässt sich der Skalenmaßstab über die Tiefenschärfe und zum anderen über die Flugbahn des Balls ermitteln. Bei der Flugbahn werden zwei Ansätze betrachtet. Im Folgenden werden die drei Verfahren kurz erläutert.
 % Tiefenschärfe-Verfahren (Kamera-Parameter)
-\todo[inline]{Verfahren über die Tiefenschärfe erläutern (Frank)}
+\subsection{Verfahren mit Hilfe der Tiefenschärfe}
+Die Brennweite bestimmt den Abstand Linsenhauptebene und ihrem Brennpunkt. Ist nun also diese Brennweite (Abstand in z.B.: Metern) bei einer Kamera gegeben, so kennt man den Abstand eines Objekts zur Linse, wenn dieses den höchsten Schärfegrad erreicht hat. Dies kann beispielhaft bei unserem Ballwurfszenario implementiert werden. Hier wird einfach für jedes Bild die Kantenbreite über Sobel berechnet und das Bild mit der schmalsten Ballkante, ist dann dem Fokus der Kameralinse am nächsten. Die Genauigkeit der Methode hängt zum einen, von der Genauigkeit der Brennweitenangabe und zum anderen, von Möglichkeit den Ball genau im Brennpunkt erfassen zu können, ab.\\
+\linebreak
+Der Balldurchmesser kann man dann mit Hilfe der internen Kamerabemaßungen und dem Strahlensatz ermitteln. Wenn $\overline{AB}$ die Breite des Fotochips, $\overline{A'B'}$ die Breite des sich auf der Linse befindenden Bilds, $\overline{A''B''}$ der Balldurchmesser, $d_{1}$ der Abstand vom Fotochip zur Linsenhauptebene und $d_{2}$ die Brennweite ist, kann $\overline{A''B''}$  wie folgt berechnet werden (siehe. Abb \ref{abb:Strahlensatz}):\\
+\linebreak
+\begin{figure}[!h]
+\centering
+\includegraphics[scale=0.6]{./Strahlensatz.eps}
+\caption{Veranschaulichung für die Balldurchmesserberechnung mit Hilfe der Tiefenschärfe.}
+\label{abb:Strahlensatz}
+\end{figure}
+\begin{center}
+$\frac{\overline{AB}}{\overline{A'B'}} = \frac{\overline{ZA}}{\overline{ZA'}} = \frac{\overline{ZA}}{\overline{ZA}+\overline{AA'}}$\\
+$(\overline{ZA}+\overline{AA'})\frac{\overline{AB}}{\overline{A'B'}}-\overline{ZA}=0$\\
+$\overline{ZA}=\frac{\overline{AA'}\frac{AB}{A'B'}}{1-\frac{AB}{A'B'}}$
+\end{center}
+mit
+\begin{center}
+$\overline{A'A} = \sqrt{d_{1}^{2}+(\frac{\overline{A'B'}}{2}-\frac{\overline{AB}}{{2}})^{2}}$\\
+\end{center}
+dann erhält man über
+\begin{center}
+$\frac{\overline{AB}}{\overline{A''B''}} = \frac{\overline{ZA}}{\overline{ZA''}} = \frac{\overline{ZA}}{\overline{ZA}+\overline{AA'}+\overline{A'A''}} $\\
+\end{center}
+mit
+\begin{center}
+$\overline{A'A''} = \sqrt{d_{2}^{2}+(\frac{\overline{A''B''}}{2}-\frac{\overline{A'B'}}{{2}})^{2}}$\\
+\end{center}
+das gesuchte $\overline{A''B''}$ mit folgender Berechnung:\\
+\begin{center}
+$\overline{A''B''} = \frac{\overline{ZA}+\overline{AA'}+\overline{A'A''}}{\overline{ZA}}\overline{AB}$
+\end{center}
+\subsection{Verfahren mit Hilfe der Ballflugbahn}
 % Bahngleichung
 Des Weiteren lässt sich der Skalenmaßstab über die Flugbahn des Balls berechnen, welche aus den vorhandenen Messungen hervorgeht. Es handelt sich hierbei um einen schrägen Wurf. Die Aufnahmezeit der einzelnen Frames ist bekannt, sodass über den Wurfwinkel $\alpha$ die Anfangsgeschwindigkeit $v_0$ ermittelt werden kann, wenn angenommen wird, dass die Ballposition auf dem ersten Frame den Start repräsentiert. Für diese Ballposition wird $v_0$ mittels der Gleichung \ref{} berechnet. 
 \todo[inline]{Gleichungen erstellen + Grafiken (Annika)}
-Da $v_y$ beim Maximum der Bahnkurve gleich 0 ist, lässt sich die Gleichung nach $v_0$ umstellen. Bei $\Delta t$ handelt es sich um die vergangene Zeit von $t_1$ bis $t_2$, wie in Abbildung \ref{} zu sehen ist (Vergangene Zeit vom Startpunkt bis zur maximalen erreichten Höhe).
+Da $v_y$ am höchsten Punkt der Bahnkurve gleich 0 ist, lässt sich die Gleichung nach $v_0$ umstellen. Bei $\Delta t$ handelt es sich um die vergangene Zeit von $t_1$ bis $t_2$, wie in Abbildung \ref{} zu sehen ist (Vergangene Zeit vom Startpunkt bis zur maximalen erreichten Höhe).
 \todo[inline]{Text noch unvollständig (Annika)}
 Bei der folgenden Bahngleichung wird angenommen, dass kein Luftwiderstand vorhanden ist (Annahme erfolgte ebenso bei der Programmieraufgabe). ...
 
