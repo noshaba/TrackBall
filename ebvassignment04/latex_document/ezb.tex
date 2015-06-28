@@ -120,9 +120,9 @@ Da beim Fußball schon wenige cm entscheidend sind, sollte der einzusetzende Alg
 Um den Skalenmaßstab aus den Messungen zu bestimmen, soll eine Analyse der Situation durchgeführt werden. Zum einen lässt sich der Skalenmaßstab über die Tiefenschärfe und zum anderen über die Flugbahn des Balls ermitteln. Bei der Flugbahn werden zwei Ansätze betrachtet. Im Folgenden werden die drei Verfahren kurz erläutert.
 % Tiefenschärfe-Verfahren (Kamera-Parameter)
 \subsection{Verfahren mit Hilfe der Tiefenschärfe}
-Die Brennweite bestimmt den Abstand Linsenhauptebene und ihrem Brennpunkt. Ist nun also diese Brennweite (Abstand in z.B.: Metern) bei einer Kamera gegeben, so kennt man den Abstand eines Objekts zur Linse, wenn dieses den höchsten Schärfegrad erreicht hat. Dies kann beispielhaft bei unserem Ballwurfszenario implementiert werden. Hier wird einfach für jedes Bild die Kantenbreite über Sobel berechnet und das Bild mit der schmalsten Ballkante, ist dann dem Fokus der Kameralinse am nächsten. Die Genauigkeit der Methode hängt zum einen, von der Genauigkeit der Brennweitenangabe und zum anderen, von Möglichkeit den Ball genau im Brennpunkt erfassen zu können, ab.\\
+Die Brennweite bestimmt den Abstand Linsenhauptebene und ihrem Brennpunkt. Ist nun also diese Brennweite (Abstand in z.B.: Metern) bei einer Kamera gegeben, so kennt man den Abstand eines Objekts zur Linse, wenn dieses den höchsten Schärfegrad erreicht hat. Dies kann beispielhaft bei unserem Ballwurfszenario implementiert werden. Hier wird einfach für jedes Bild die Kantenbreite über Sobel berechnet und das Bild mit der schmalsten Ballkante, ist dann dem Fokus der Kameralinse am nächsten. Die Genauigkeit der Methode hängt zum einen von der Genauigkeit der Brennweitenangabe und zum anderen von der Möglichkeit, den Ball genau im Brennpunkt erfassen zu können, ab.\\
 \linebreak
-Der Balldurchmesser kann man dann mit Hilfe der internen Kamerabemaßungen und dem Strahlensatz ermitteln. Wenn $\overline{AB}$ die Breite des Fotochips, $\overline{A'B'}$ die Breite des sich auf der Linse befindenden Bilds, $\overline{A''B''}$ der Balldurchmesser, $d_{1}$ der Abstand vom Fotochip zur Linsenhauptebene und $d_{2}$ die Brennweite ist, kann $\overline{A''B''}$  wie folgt berechnet werden (siehe. Abb \ref{abb:Strahlensatz}):\\
+Der Balldurchmesser kann demnach mit Hilfe der internen Kamerabemaßungen und dem Strahlensatz ermitteln werden. Wenn $\overline{AB}$ die Breite des Fotochips, $\overline{A'B'}$ die Breite des sich auf der Linse befindenden Bilds, $\overline{A''B''}$ der Balldurchmesser, $d_{1}$ der Abstand vom Fotochip zur Linsenhauptebene und $d_{2}$ die Brennweite ist, kann $\overline{A''B''}$  wie folgt berechnet werden (siehe. Abb \ref{abb:Strahlensatz}):\\
 \linebreak
 \begin{figure}[!h]
 \centering
@@ -153,13 +153,58 @@ $\overline{A''B''} = \frac{\overline{ZA}+\overline{AA'}+\overline{A'A''}}{\overl
 \end{center}
 \subsection{Verfahren mit Hilfe der Ballflugbahn}
 % Bahngleichung
-Des Weiteren lässt sich der Skalenmaßstab über die Flugbahn des Balls berechnen, welche aus den vorhandenen Messungen hervorgeht. Es handelt sich hierbei um einen schrägen Wurf. Die Aufnahmezeit der einzelnen Frames ist bekannt, sodass über den Wurfwinkel $\alpha$ die Anfangsgeschwindigkeit $v_0$ ermittelt werden kann, wenn angenommen wird, dass die Ballposition auf dem ersten Frame den Start repräsentiert. Für diese Ballposition wird $v_0$ mittels der Gleichung \ref{} berechnet. 
-\todo[inline]{Gleichungen erstellen + Grafiken (Annika)}
-Da $v_y$ am höchsten Punkt der Bahnkurve gleich 0 ist, lässt sich die Gleichung nach $v_0$ umstellen. Bei $\Delta t$ handelt es sich um die vergangene Zeit von $t_1$ bis $t_2$, wie in Abbildung \ref{} zu sehen ist (Vergangene Zeit vom Startpunkt bis zur maximalen erreichten Höhe).
-\todo[inline]{Text noch unvollständig (Annika)}
-Bei der folgenden Bahngleichung wird angenommen, dass kein Luftwiderstand vorhanden ist (Annahme erfolgte ebenso bei der Programmieraufgabe). ...
+\subsubsection*{Erster Ansatz}
+Des Weiteren lässt sich der Skalenmaßstab über die Flugbahn des Balls berechnen, welche aus den vorhandenen Messungen hervorgeht. Es handelt sich hierbei um einen schrägen Wurf.
+Die Aufnahmezeit der einzelnen Frames ist bekannt, sodass über den Wurfwinkel $\alpha$ die Anfangsgeschwindigkeit $v_0$ ermittelt werden kann, wenn angenommen wird, dass die Ballposition auf dem ersten Frame den Start repräsentiert. $v_0$ setzt sich aus den Komponenten $v_x$ und $v_y$ zusammen und ist Abhängigkeit vom Abwurfwinkel $\alpha$ (siehe Abbildung \ref{abb:geschwindigkeiten}). $v_y$ stellt hierbei die Geschwindigkeit in y-Richtung und $v_x$ die Geschwindigkeit in x-Richtung dar und lassen sich über die folgenden Gleichungen ausdrücken:
+\begin{center}
+$v_x = v_0 * cos(\alpha)$ \\
+$v_y = v_0 * sin(\alpha)$
+\end{center}
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.8]{./img/geschwindigkeitsrichtung.png}
+	\caption{Geschwindigkeitsvektoren $v_0$, $v_x$ sowie $v_y$}
+	\label{abb:geschwindigkeiten}
+\end{figure}
+Mittels des Geschwindigkeit-Zeit-Gesetzes, wo ebenso die Erdbeschleunigung ($g = 9.81m/s^2$) und Steigzeit $t_H$ einbezogen wird, lässt sich die Geschwindigkeit $v_y$ bei einem schrägen Wurf wie folgt berechnen:
+\begin{center}
+$v_y = v_0 * sin(\alpha) - g * t_H$
+\end{center}
+Da $v_y$ am höchsten Punkt der Bahnkurve gleich 0 ist, lässt sich die Gleichung nach $v_0$ umstellen. Bei $t_H$ handelt es sich um die vergangene Zeit vom ersten Bild (Start bei $t_1$) bis zum Bild mit dem höchsten Punkt der Bahnkurve (Maximum bei $t_2$), wie in Abbildung \ref{abb:ballflugbahn} zu sehen ist. Da alle Parameter bekannt sind, kann die Anfangsgeschwindigkeit $v_0$  mit der Gleichung 
+\begin{center}
+	$v_0 = \dfrac{g * t_H}{sin(\alpha)}$
+\end{center}
+berechnet werden.
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=1.5]{./img/BallflugbahnAnsatz1.png}
+	\caption{Ballflugbahn}
+	\label{abb:ballflugbahn}
+\end{figure}
+Anschließend kann die maximale Wurfhöhe $y_{max}$ unter Verwendung des Ort-Zeit-Gesetz über die nachfolgende Gleichung ermittelt werden, wobei $y_0$ gleich 0 ist:
+\begin{center}
+$y_{max} = y_0 + v_0 * sin(\alpha) * t_H - g * (t_{H})^{2}$
+\end{center}
+Wenn nun die Länge der maximalen Ballhöhe, wie in Abbildung \ref{abb:ballflugbahn} zu sehen ist, bekannt ist, verfügt man über einen Skalenmaßstab mit dem zum Beispiel der Balldurchmesser bestimmt werden kann. Es handelt sich hierbei jedoch nur um eine Approximation, da die z-Richtung des Wurfes nicht mit einbezogen wurde. 
 
-% Unabhängigkeitsgesetz
+Für ein genaueres Ergebnis könnte die Tiefeninformation über den zuvor beschriebenen Tiefenschärfe-Ansatz einbezogen werden, sodass beide Verfahren kombiniert werden.
+\todo[inline]{Kann man das so schreiben? Oder sollten wir das lieber weglassen mit der kombinierten Variante, da wir die ja nicht weiter erläutern werden?}
+
+\subsubsection*{Zweiter Ansatz}
+Das zweite Verfahren zur Bestimmung des Skalenmaßstabs über die Ballflugbahn macht sich das Unabhängigkeitsgesetz zu nutze. Der Ball bewegt sich von der maximalen Wurfhöhe zum Zeitpunkt $t_2$ aus kurvenförmig zum Boden hin. Wenn ein weiterer Ball von der maximalen Höhe zum Zeitpunkt $t_2$ im freien Fall nach unten fallen würde, würden beide Bälle den Boden zum selben Zeitpunkt erreichen. Dieses Phänomen machen wir uns zu nutze, indem wir die Strecke $h$ für den freien Fall ermitteln, also die Entfernung von der maximalen Wurfhöhe bis zum Aufprall (siehe Abbildung \ref{abb:freierfall}). Diese Strecke $h$ wird mittels folgender Gleichung berechnet:
+\begin{center}
+$h = \dfrac{g * (t_H)^2}{2}$
+\end{center}
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=1.5]{./img/BallflugbahnAnsatz2.png}
+	\caption{Ballflugbahn}
+	\label{abb:freierfall}
+\end{figure}
+$t_H$ ist in diesem Fall die Fallzeit von $t_2$ bis zum Aufprall auf dem Boden. Aufgrund des Unabhängigkeitsgesetzes ist die Fallzeit über die Bildaufnahmen bekannt.
+Diese Strecke $h$ stellt ebenso einen Skalenmaßstab im Bild dar, wodurch unter anderem der Balldurchmesser ermittelt werden kann. Auch bei diesem Verfahren handelt es sich nur um eine Approximation, da die z-Richtung des Wurfes nicht mit einbezogen wird. Das Ergebnis reicht jedoch für unseren Anwendungsfall aus.
+\todo[inline]{Kann man dazu Approximation sagen o.O?}
+Hinzu kommt, dass bei den Berechnungen angenommen wurde, dass kein Luftwiderstand vorhanden ist (Annahme erfolgte ebenso bei der Programmieraufgabe).
 
 
 
