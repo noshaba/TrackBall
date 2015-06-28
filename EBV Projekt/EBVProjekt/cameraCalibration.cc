@@ -14,16 +14,16 @@ int CameraCalibration::project (double& x, double& y, const VVector& pInWorld) c
 	inverse(worldInCamera, cameraInWorld);
 	VVector pInCamera = worldInCamera * pInWorld;
 
-	// check if behind camera
-	int inside = pInCamera[2] > 0 ? 1 : 0;
+	// avoid division by zero
+	if (pInCamera[2] == 0) return 0;
 
 	x = centerX + alpha * pInCamera[0] / pInCamera[2];
 	y = centerY + alpha * pInCamera[1] / pInCamera[2];
 
+	// check if behind camera
+	if (pInCamera[2] < 0) return 0;
 	// check if inside image
-	inside = isInside(x, y) ? 2 : inside;
-
-	return inside;
+	return isInside(x, y) + 1;
 }
 
 
@@ -34,17 +34,17 @@ int CameraCalibration::project (double& x, double& y, double& r, const VVector& 
 	inverse(worldInCamera, cameraInWorld);
 	VVector pInCamera = worldInCamera * pInWorld;
 
-	// check if behind camera
-	int inside = pInCamera[2] > 0 ? 1 : 0;
+	// avoid division by zero
+	if (pInCamera[2] == 0) return 0;
 
 	x = centerX + alpha * pInCamera[0] / pInCamera[2];
 	y = centerY + alpha * pInCamera[1] / pInCamera[2];
 	r = alpha * radius / pInCamera[2];
 
+	// check if behind camera
+	if (pInCamera[2] < 0) return 0;
 	// check if inside image
-	inside = isInside(x, y) ? 2 : inside;
-
-	return inside;
+	return isInside(x, y) + 1;
 }
 
 

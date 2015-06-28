@@ -30,30 +30,32 @@ void ParticleFilter::Particle::observeInit (double x, double y, double r)
     // TODO: implement (2P)
 	double sigma = filter->param.sigmaImage;
 	VVector p;
-	// TODP: multiply rndGauss with sigma or not?
+	// add noise
 	x += sigma * randomGaussian();
 	y += sigma * randomGaussian();
 	r += sigma * randomGaussian();
 	if (filter->camera.generate(p, x, y, r, filter->param.ballRadius)) {
 		if (state == POSITIONDEFINED) {
 			double dT = time - timeOfLastObservation;
+			// determine velocity after waitUntilSecondObservation has passed
 			if (dT > filter->param.waitUntilSecondObservation) {
-				velocity = (p - position) / dT; // TODO: add acceleration or not?
-				initVelocity = velocity;
+				// acceleration added to initial velocity for analytical approach
+				velocity = (p - position) / dT + filter->param.g * dT * .5;
 				position = p;
 				state = FULLDEFINED;
 				timeOfLastObservation = time;
 			}
 		}
 		else {
+			// determine initial position of particle
 			position = p;
-			initPosition = p;
 			state = POSITIONDEFINED;
 			timeOfLastObservation = time;
 		}
 	}
-	// is weighting allowed in init?
+	// for a better result, particles outside of field of view can be already winthdrawn in the initialization
 	else weight = 0;
+	if (position[2] < 0) weight = 0;
 }
 
 
@@ -61,12 +63,15 @@ void ParticleFilter::Particle::observeRegular (double x, double y, double r)
 {
     // TODO: implement (1P)
 	double dx, dy, dr, sigma = filter->param.sigmaImage;
-	if (!filter->camera.project(dx, dy, dr, position, filter->param.ballRadius)) weight = 0;
+	// ignore particle if behind camera
+	if (!filter->camera.project(dx, dy, dr, position, filter->param.ballRadius)) 
+		weight = 0;
 	else {
+		// weight particle
 		dx = x - dx;
 		dy = y - dy;
 		dr = r - dr;
-		weight *= exp(-(dx*dx + dy*dy + dr*dr) / (2 * sigma*sigma));
+		weight *= exp(-(dx*dx + dy*dy + dr*dr) / (2 * sigma * sigma));
 	}
 	timeOfLastObservation = time;
 }
@@ -94,11 +99,9 @@ void ParticleFilter::Particle::dynamic (double deltaT)
 	if (state == FULLDEFINED) {
 		VVector ones = { 1, 1, 1, 0 };
 		VVector n = { randomGaussian(), randomGaussian(), randomGaussian(), 0};
+		// analytical approach
 		position += (deltaT * velocity + deltaT * deltaT * filter->param.g * .5).mul(ones); // mul = element wise multiplication
-		// isn't vectorized acceleration better than an acceleration scalar (in lectures) 
-		// since no check for length of vector is needed??
 		velocity += (deltaT * filter->param.g + filter->param.sigmaVelocity * sqrt(deltaT) * n).mul(ones);
-//		position = initPosition + (initVelocity * time + filter->param.g * .5 * time * time).mul(ones);
 	}
 	time += deltaT;
 }
@@ -124,32 +127,45 @@ void ParticleFilter::createSamples (int nrOfParticles)
 void ParticleFilter::resample (int nrOfParticles)
 {
     // TODO: implement (1P)
+	// 'j' and 'weightUpToJ' just for solution in lecture
 	double totalWeight = 0, weightUpToJ = 0;
 	int j = -1;
 	vector<Particle> pNew;
 
+	// calculate total weight
 	for (int i = 0; i < particle.size(); ++i)
 		totalWeight += particle[i].weight;
 
 	double normWeight = totalWeight / nrOfParticles, unitWeight = 1.0 / nrOfParticles;
+	// initial "wheel of fortune" pointer
 	double weightChosen = randomUniform() * normWeight;
 
 	for (int i = 0; i < nrOfParticles; i++) {
-		// why doesn't the solution from the lecture work?!
-	/*	while (weightChosen >= weightUpToJ) {
-			j++;
-			weightUpToJ += particle[i].weight;
-		}
-		pNew.push_back(particle[j]);
-		pNew.back().weight = unitWeight;
-		weightChosen += normWeight;*/
+
+		// solution from lecture creates an infinite loop because the Gaussian distribution becomes 0 at some points
+		// where the particle is too far from the actual cirle (numerical underflow)
+
+		/*
+			while (weightChosen >= weightUpToJ) {
+				j++;
+				weightUpToJ += particle[i].weight;
+			}
+			pNew.push_back(particle[j]);
+			pNew.back().weight = unitWeight;
+			weightChosen += normWeight;
+		*/
+
+		// current "wheel of fortune" pointer
 		weightChosen -= particle[i].weight;
+		// add normWeight to the current pointer until the wanted wight is archieved
 		while (weightChosen <= 0) {
 			pNew.push_back(particle[i]);
 			pNew.back().weight = unitWeight;
+			// next "wheel of fortune" pointer
 			weightChosen += normWeight;
 		}
 	}
+	// make sure sizes are equal
 	assert("Resampled particles must have the size of nrOfParticles" && pNew.size() == nrOfParticles);
 	particle = pNew;
 }
