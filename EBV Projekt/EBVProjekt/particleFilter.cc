@@ -97,11 +97,10 @@ void ParticleFilter::Particle::dynamic (double deltaT)
 {
 	// TODO: implement (2P)
 	if (state == FULLDEFINED) {
-		VVector ones = { 1, 1, 1, 0 };
 		VVector n = { randomGaussian(), randomGaussian(), randomGaussian(), 0};
 		// analytical approach
-		position += (deltaT * velocity + deltaT * deltaT * filter->param.g * .5).mul(ones); // mul = element wise multiplication
-		velocity += (deltaT * filter->param.g + filter->param.sigmaVelocity * sqrt(deltaT) * n).mul(ones);
+		position += deltaT * velocity + deltaT * deltaT * filter->param.g * .5;
+		velocity += deltaT * filter->param.g + filter->param.sigmaVelocity * sqrt(deltaT) * n;
 	}
 	time += deltaT;
 }
