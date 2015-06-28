@@ -4,7 +4,7 @@
 
 ParticleFilter::Parameters::Parameters ()
 // TODO: choose good parameter (1P)
-:ballRadius(0.1), sigmaVelocity(0.5), sigmaImage(2), deltaT(1.0 / 25), waitUntilSecondObservation(0.125), nrOfParticles(200)
+:ballRadius(0.1), sigmaVelocity(0.5), sigmaImage(2), deltaT(1.0 / 25), waitUntilSecondObservation(3.0 / 25), nrOfParticles(200)
 {
   g[0] = 0;
   g[1] = 0;  
@@ -31,14 +31,15 @@ void ParticleFilter::Particle::observeInit (double x, double y, double r)
 	double sigma = filter->param.sigmaImage;
 	VVector p;
 	// TODP: multiply rndGauss with sigma or not?
-	x += randomGaussian();
-	y += randomGaussian();
-	r += randomGaussian();
+	x += sigma * randomGaussian();
+	y += sigma * randomGaussian();
+	r += sigma * randomGaussian();
 	if (filter->camera.generate(p, x, y, r, filter->param.ballRadius)) {
 		if (state == POSITIONDEFINED) {
 			double dT = time - timeOfLastObservation;
 			if (dT > filter->param.waitUntilSecondObservation) {
-				velocity = (p - position) / dT + filter->param.g * dT * .5; // TODO: add acceleration or not?
+				velocity = (p - position) / dT; // TODO: add acceleration or not?
+				initVelocity = velocity;
 				position = p;
 				state = FULLDEFINED;
 				timeOfLastObservation = time;
@@ -46,6 +47,7 @@ void ParticleFilter::Particle::observeInit (double x, double y, double r)
 		}
 		else {
 			position = p;
+			initPosition = p;
 			state = POSITIONDEFINED;
 			timeOfLastObservation = time;
 		}
@@ -96,6 +98,7 @@ void ParticleFilter::Particle::dynamic (double deltaT)
 		// isn't vectorized acceleration better than an acceleration scalar (in lectures) 
 		// since no check for length of vector is needed??
 		velocity += (deltaT * filter->param.g + filter->param.sigmaVelocity * sqrt(deltaT) * n).mul(ones);
+//		position = initPosition + (initVelocity * time + filter->param.g * .5 * time * time).mul(ones);
 	}
 	time += deltaT;
 }

@@ -76,6 +76,8 @@ public:
         the \c Ransac calibration.
     */
     VVector position;
+	VVector initPosition;
+	VVector initVelocity;
 
     //! Velocity of the ball [m/s] in world coordinates.
     VVector velocity;

@@ -97,7 +97,7 @@ void paintParticleFilter (Mat& overlay, const ParticleFilter& pF)
     int sgnZ = +1;
     if (pF.camera.cameraInWorld(2, 3)<0) sgnZ = -1;
     
-    for (int i=0; i<(int) pF.particle.size(); i++) {
+	for (int i=0; i<(int) pF.particle.size(); i++) {
         ParticleFilter::Particle p = pF.particle[i];
         if (p.state>=ParticleFilter::Particle::POSITIONDEFINED) {
             double x, y;
@@ -172,7 +172,7 @@ void trackBall3D (const char* title, const vector<string>& images, bool doSave, 
         hc.hough (houghImg, sobelImgPrev, sobelImg);
         hc.extractFromHoughImage (circles, houghImg, sobelImg);
         sobelImg.copyTo(sobelImgPrev);
-        
+
         pf.dynamic ();
         if (circles.size()==1 &&
             0<=circles.front().xC && circles.front().xC<srcImg.cols &&
