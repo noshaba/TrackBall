@@ -250,15 +250,20 @@ Der Algorithmus orientiert sich an bekannten Objekten, deren Dimensionen im phys
 \linebreak
 Das Fußballfeld ist rechteckig, aber je nach Blickwinkel der Kamera ergeben sich Bildverzerrungen (beispielsweise erscheint der Platz, wenn die Kamera flach, von der Seite sowie mittig auf das Spielfeld schaut, trapezförmig). Diese Verzerrung muss ebenso beim Kreis berücksichtigt werden. So wird aus dem Kreis eine Ellipse, deren kurze Diagonale umso größer wird, je näher die Ellipse an der Kamera ist. Diese Verzerrung kann durch die Kameragleichung ermittelt werden (siehe Gleichung \ref{eq:Kameragleichung})\\
 \linebreak
-Wenn nun bekannt ist, mit welchen Parametern die Ellipse eingezeichnet werden soll, gibt es hierfür zwei Möglichkeiten. Zum einen kann statisch festlegen werden, dass das Kamerabild genau an einer Stelle stehen bleibt und erst beim Anspielen wieder geschwenkt werden darf, da sich ab hier der Kreis wieder auflösen soll - so muss die Zone nur einmal berechnet und eingetragen werden. Für die nachfolgenden Bilder
+Wenn nun bekannt ist, mit welchen Parametern die Ellipse eingezeichnet werden soll, gibt es hierfür zwei Möglichkeiten, diese um den Ball, als Mittelpunkt zu zeichnen. Zum einen kann statisch festlegen werden, dass das Kamerabild genau an einer Stelle stehen bleibt und erst beim Anspielen wieder geschwenkt werden darf, da sich ab hier der Kreis wieder auflösen soll - so muss die Zone nur einmal berechnet und eingetragen werden. Für die nachfolgenden Bilder
 kann diese dann einfach rein kopiert werden. \\
 \linebreak
-\todo[inline]{
-	- die nachfolgenden Bilder, die von der gleichen Perspektive aufgenommen werden? Oder welche Bilder meinst du damit?}
-Die andere Möglichkeit besteht darin, den Freistoß-Kreis beim Zoom-Vorgang zu zeigen. Hierfür werden mindestens zwei Bilder benötigt, auf denen Objekte zu sehen sind, deren reale Größe bekannt sind (siehe \ref{b:skaliergr} Skaliergrößen). Im Mittelpunkt der Bilder ist der Ball und es werden wie gewohnt die Ellipsen berechnet. Da sich aber beim Zoomen die Zone im Folgebild vergrößert, kann nun ein $\vartriangle r$ berechnet werden und für die nächsten Aufnahmen (vor allem für diese, wo kein Objekt mit bekannter Größe zu erkennen ist) der Radius und dadurch die Ellipse definiert werden. Da dies einer linearen Zoom-Funktion entspricht, funktioniert dieses Verfahren ausschließlich bei konstanter Vergrößerungsgeschwindigkeit. Wenn mehr als zwei Aufnahmen zur Berechnung von $\vartriangle r$ verwendet und deren Ergebnis gemittelt werden, lässt sich dieser Faktor genauer einstellen.
+Die andere Möglichkeit besteht darin, den Freistoß-Kreis beim Zoom-Vorgang zu zeigen. Hierfür werden mindestens zwei Bilder benötigt, auf denen Objekte zu sehen sind, deren reale Größe bekannt sind (siehe \ref{b:skaliergr} Skaliergrößen). Im Mittelpunkt der Bilder ist der Ball und es werden wie gewohnt die Ellipsen berechnet. Da sich aber beim Zoomen die Zone im Folgebild vergrößert, kann nun ein $\vartriangle r$ berechnet werden und für die nächsten Aufnahmen (vor allem für diese, wo kein Objekt mit bekannter Größe zu erkennen ist) der Radius und dadurch die Ellipse definiert werden. Da dies einer linearen Zoom-Funktion entspricht, funktioniert dieses Verfahren ausschließlich bei konstanter Vergrößerungsgeschwindigkeit. Wenn mehr als zwei Aufnahmen zur Berechnung von $\vartriangle r$ verwendet und deren Ergebnis gemittelt werden, lässt sich dieser Faktor genauer einstellen.\\
+\linebreak
+\textbf{UPDATE }Optional kann der Kreis farblich markiert werden, wenn ein Gegenspieler sich innerhalb des Kreises befindet. Hierfür tippt der Kameramann die Personen an, die sich innerhalb der Zone befinden dürfen. Anschließend wird immer deren Positionen immer mit dem vorhergehenden Bild verglichen, um eine Falschmeldung auszuschließen, wenn die Signalfarbe gesetzt werden soll. Gegenspieler im Kreis werden über deren Position und farbliche Unterschiede zum jeweiligen Boden erkannt.\\
+\linebreak
+\textbf{UPDATE }Um Verwechslungen und Fehlausstrahlung zu vermeiden soll der Kameramann zum einen, einen Bereich um den Kreis angeben, mit welcher der Algorithmus über Hough zur Ballposition kommt. Zum anderen soll der auszustrahlende Kreis nochmal von einer Person bestätigt werden, ob dieser ungefähr in Position und Größe richtig ermittelt wurde.
 \subsection{Skaliergrößen}\label{b:skaliergr}
-Nachfolgend, Beispiele für Objekte mit bekannten Ausmaßen, mit deren Hilfe letztlich die Freistoßzone definiert werden kann: Torlatte und -pfosten, Rasenmuster sowie die weiße Linien (darunter: Seiten- und Mittellinien, Strafraum und Anstoßkreis). 
+Nachfolgend, Beispiele für Objekte mit bekannten Ausmaßen, mit deren Hilfe letztlich die Freistoßzone definiert werden kann: Torlatte und -pfosten, Rasenmuster sowie die weiße Linien (darunter: Seiten- und Mittellinien, Strafraum und Anstoßkreis).\\
+\linebreak
+\textbf{UPDATE }Damit der Algorithmus weiß, um welche Skaliergröße es sich gerade handelt soll entweder der Kameramann angeben, dass im Blickpunkt sich z.B.: das Tor befindet. Oder es muss noch ein automatischer Klassifizierungsalgorithmus hinzugefügt werden, welcher z.B.: den Mittelkreis über dessen Form, oder den Strafraum über seine rechteckige Form vor dem Tor erkennt.
 \subsection{Kameraeinstellung}
+\todo[inline]{Nur die Komponenten der Kameragleichung erklären und darauf verweisen dass die zusammen Tw<-b ergeben.}
 Ein Bildpunkt im Weltkoordinatensystem kann auf das Kamerasystem mit nachfolgender Gleichung umgerechnet werden:\\
 \begin{small}
 \begin{equation}
@@ -335,13 +340,14 @@ Die blaue Strecke teilt das Feld in zwei Bereiche auf, sie ist gleichzeitig die 
 \caption{Veranschaulichung für die $\alpha_{r}$-Berechnung}
 \label{abb:alpharBerechnung}
 \end{figure}
+\todo[inline]{Skalierungsfaktor vor den ganzen Term schieben}
 \subsection{Beurteilung}
 Da beim Fußball schon wenige cm entscheidend sind, sollte der einzusetzende Algorithmus genaue Ergebnisse liefern, da \glqq Fehlentscheidungen\grqq \ ansonsten den Zuschauer verärgern können. Die unter diesen Bedingungen, gezeigten Methoden haben vermutlich nur eine begrenzte Genauigkeit, je nachdem wie exakt ein Objekt mit bekannter Größe erfasst wird (Negativbeispiel: Auflösung des Fußballs bei Aufnahme aus der Entfernung).
 \section{Der einäugige Ballfangkönig (1 Punkt)}
 Um den Skalenmaßstab aus den Messungen zu bestimmen, soll eine Analyse der Situation durchgeführt werden. Zum einen lässt sich der Skalenmaßstab über die Tiefenschärfe und zum anderen über die Flugbahn des Balls ermitteln. Bei der Flugbahn werden zwei Ansätze betrachtet. Im Folgenden werden die drei Verfahren kurz erläutert.
 % Tiefenschärfe-Verfahren (Kamera-Parameter)
 \subsection{Verfahren mit Hilfe der Tiefenschärfe}
-Die Brennweite bestimmt den Abstand Linsenhauptebene und ihrem Brennpunkt. Ist nun also diese Brennweite (Abstand in z.B.: Metern) bei einer Kamera gegeben, so kennt man den Abstand eines Objekts zur Linse, wenn dieses den höchsten Schärfegrad erreicht hat. Dies kann beispielhaft bei unserem Ballwurfszenario implementiert werden. Hier wird einfach für jedes Bild die Kantenbreite über Sobel berechnet und das Bild mit der schmalsten Ballkante, ist dann dem Fokus der Kameralinse am nächsten. Die Genauigkeit der Methode hängt zum einen von der Genauigkeit der Brennweitenangabe und zum anderen von der Möglichkeit, den Ball genau im Brennpunkt erfassen zu können, ab.\\
+Die Brennweite bestimmt den Abstand Linsenhauptebene und ihrem Brennpunkt. Ist nun also diese Brennweite (Abstand in z.B.: Metern) bei einer Kamera gegeben, so kennt man den Abstand eines Objekts zur Linse, wenn dieses den höchsten Schärfegrad erreicht hat. Dies kann beispielhaft bei unserem Ballwurfszenario implementiert werden. Hier wird einfach für jedes Bild die Kantenbreite über Sobel berechnet und das Bild, mit der der Ball die größten Sobellänge erreicht, ist dann dem Fokus der Kameralinse am nächsten. Die Genauigkeit der Methode hängt zum einen von der Genauigkeit der Brennweitenangabe und zum anderen von der Möglichkeit, den Ball genau im Brennpunkt erfassen zu können, ab.\\
 \linebreak
 Der Balldurchmesser kann demnach mit Hilfe der internen Kamerabemaßungen und dem Strahlensatz ermitteln werden. Wenn $\overline{AB}$ die Breite des Fotochips, $\overline{A'B'}$ die Breite des sich auf der Linse befindenden Bilds, $\overline{A''B''}$ der Balldurchmesser, $d_{1}$ der Abstand vom Fotochip zur Linsenhauptebene und $d_{2}$ die Brennweite ist, kann $\overline{A''B''}$  wie folgt berechnet werden (siehe. Abb \ref{abb:Strahlensatz}):\\
 \linebreak
@@ -352,8 +358,8 @@ Der Balldurchmesser kann demnach mit Hilfe der internen Kamerabemaßungen und de
 \label{abb:Strahlensatz}
 \end{figure}
 \begin{center}
-$\frac{\overline{AB}}{\overline{A'B'}} = \frac{\overline{ZA}}{\overline{ZA'}} = \frac{\overline{ZA}}{\overline{ZA}+\overline{AA'}}$\\
-$(\overline{ZA}+\overline{AA'})\frac{\overline{AB}}{\overline{A'B'}}-\overline{ZA}=0$\\
+$\frac{\overline{AB}}{\overline{A'B'}} = \frac{\overline{ZA}}{\overline{ZA'}} = \frac{\overline{ZA}}{\overline{ZA}+\overline{AA'}}$\\ \vspace{0.5cm}
+$(\overline{ZA}+\overline{AA'})\frac{\overline{AB}}{\overline{A'B'}}-\overline{ZA}=0$\\ \vspace{0.5cm}
 $\overline{ZA}=\frac{\overline{AA'}\frac{AB}{A'B'}}{1-\frac{AB}{A'B'}}$
 \end{center}
 mit
@@ -387,7 +393,7 @@ $v_y = v_0 * sin(\alpha)$
 	\caption{Geschwindigkeitsvektoren $v_0$, $v_x$ sowie $v_y$}
 	\label{abb:geschwindigkeiten}
 \end{figure}
-Mittels des Geschwindigkeit-Zeit-Gesetzes, wo ebenso die Erdbeschleunigung ($g \approx 9.81m/s^2$) und Steigzeit $t_H$ einbezogen wird, lässt sich die Geschwindigkeit $v_y$ bei einem schrägen Wurf wie folgt berechnen:
+Mittels des Geschwindigkeit-Zeit-Gesetzes, wo ebenso die Erdbeschleunigung ($g = 9.81m/s^2$) und Steigzeit $t_H$ einbezogen wird, lässt sich die Geschwindigkeit $v_y$ bei einem schrägen Wurf wie folgt berechnen:
 \begin{center}
 $v_y = v_0 * sin(\alpha) - g * t_H$
 \end{center}
@@ -406,9 +412,10 @@ Anschließend kann die maximale Wurfhöhe $y_{max}$ unter Verwendung des Ort-Zei
 \begin{center}
 $y_{max} = y_0 + v_0 * sin(\alpha) * t_H - g * (t_{H})^{2}$
 \end{center}
-Wenn nun die Länge der maximalen Wurfhöhe, wie in Abbildung \ref{abb:ballflugbahn} zu sehen ist, bekannt ist, verfügt man über einen Skalenmaßstab mit dem zum Beispiel der Balldurchmesser bestimmt werden kann. Es handelt sich hierbei jedoch nur um eine Approximation, da die z-Richtung des Wurfes nicht mit einbezogen wurde. 
+Wenn nun die Länge der maximalen Ballhöhe, wie in Abbildung \ref{abb:ballflugbahn} zu sehen ist, bekannt ist, verfügt man über einen Skalenmaßstab mit dem zum Beispiel der Balldurchmesser bestimmt werden kann. Es handelt sich hierbei jedoch nur um eine Approximation, da die z-Richtung des Wurfes nicht mit einbezogen wurde. 
 
 Für ein genaueres Ergebnis könnte die Tiefeninformation über den zuvor beschriebenen Tiefenschärfe-Ansatz einbezogen werden, sodass beide Verfahren kombiniert werden.
+\todo[inline]{Kann man das so schreiben? Oder sollten wir das lieber weglassen mit der kombinierten Variante, da wir die ja nicht weiter erläutern werden?}
 
 \subsubsection*{Zweiter Ansatz}
 Das zweite Verfahren zur Bestimmung des Skalenmaßstabs über die Ballflugbahn macht sich das Unabhängigkeitsgesetz zu nutze. Der Ball bewegt sich von der maximalen Wurfhöhe zum Zeitpunkt $t_2$ aus kurvenförmig zum Boden hin. Wenn ein weiterer Ball von der maximalen Höhe zum Zeitpunkt $t_2$ im freien Fall nach unten fallen würde, würden beide Bälle den Boden zum selben Zeitpunkt erreichen. Dieses Phänomen machen wir uns zu nutze, indem wir die Strecke $h$ für den freien Fall ermitteln, also die Entfernung von der maximalen Wurfhöhe bis zum Aufprall (siehe Abbildung \ref{abb:freierfall}). Diese Strecke $h$ wird mittels folgender Gleichung berechnet:
@@ -422,8 +429,8 @@ $h = \dfrac{g * (t_H)^2}{2}$
 	\label{abb:freierfall}
 \end{figure}
 $t_H$ ist in diesem Fall die Fallzeit von $t_2$ bis zum Aufprall auf dem Boden. Aufgrund des Unabhängigkeitsgesetzes ist die Fallzeit über die Bildaufnahmen bekannt.
-Diese Strecke $h$ stellt ebenso einen Skalenmaßstab im Bild dar, wodurch unter anderem der Balldurchmesser ermittelt werden kann. Auch bei diesem Verfahren handelt es sich nur um eine Approximation, da die z-Richtung des Wurfes nicht mit einbezogen wird.
-
+Diese Strecke $h$ stellt ebenso einen Skalenmaßstab im Bild dar, wodurch unter anderem der Balldurchmesser ermittelt werden kann. Auch bei diesem Verfahren handelt es sich nur um eine Approximation, da die z-Richtung des Wurfes nicht mit einbezogen wird. Das Ergebnis reicht jedoch für unseren Anwendungsfall aus.
+\todo[inline]{Kann man dazu Approximation sagen o.O?}
 Hinzu kommt, dass bei den Berechnungen angenommen wurde, dass kein Luftwiderstand vorhanden ist (Annahme erfolgte ebenso bei der Programmieraufgabe).
 
 
