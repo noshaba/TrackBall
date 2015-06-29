@@ -5,7 +5,6 @@
 \usepackage{wrapfig}
 \usepackage{longtable}
 \usepackage{amssymb}
-\usepackage{epstopdf}
 \usepackage[colorlinks,        	% Links ohne Umrandungen in zu wählender Farbe
    linkcolor=black,   			% Farbe interner Verweise
    filecolor=black,   			% Farbe externer Verweise
@@ -291,8 +290,8 @@ Die blaue Strecke teilt das Feld in zwei Bereiche auf, sie ist gleichzeitig die 
 \begin{equation}
 \alpha_{r} = 
 \begin{cases}
-	[\frac{\pi}{2} - (\frac{\pi}{2}-\alpha_{1,min})]\frac{b'}{x} & wenn \ x\geq 0  \\
-    [\frac{\pi}{2} - (\frac{\pi}{2}-\alpha_{2,min})]\frac{b-b'}{x} & wenn \ x\leq 0 \\
+	[\frac{\pi}{2} - (\frac{\pi}{2}-\alpha_{1,min})\frac{b'}{x}] & wenn \ x\geq 0  \\
+    [\frac{\pi}{2} - (\frac{\pi}{2}-\alpha_{2,min})\frac{b'-b}{x}] & wenn \ x\leq 0 \\
 \end{cases}
 \label{eq:alphar}
 \end{equation}
