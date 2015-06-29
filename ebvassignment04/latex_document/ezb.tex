@@ -5,6 +5,7 @@
 \usepackage{wrapfig}
 \usepackage{longtable}
 \usepackage{amssymb}
+\usepackage{epstopdf}
 \usepackage[colorlinks,        	% Links ohne Umrandungen in zu wählender Farbe
    linkcolor=black,   			% Farbe interner Verweise
    filecolor=black,   			% Farbe externer Verweise
@@ -175,7 +176,7 @@ void ParticleFilter::Particle::dynamic (double deltaT)
 }
 \end{lstlisting}
 
-\begin{lstlisting}[language=C++, caption= A ball has been seen with image \textbackslash c x,y and radius \textbackslash c r.]
+\begin{lstlisting}[language=C++, caption= A ball has been seen with image \textbackslash c x y and radius \textbackslash c r.]
 void ParticleFilter::observe (double x, double y, double r)
 {
 	// TODO: implement (included with Particle::observe)
