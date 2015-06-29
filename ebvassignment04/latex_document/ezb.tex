@@ -5,7 +5,6 @@
 \usepackage{wrapfig}
 \usepackage{longtable}
 \usepackage{amssymb}
-\usepackage{epstopdf}
 \usepackage[colorlinks,        	% Links ohne Umrandungen in zu wählender Farbe
    linkcolor=black,   			% Farbe interner Verweise
    filecolor=black,   			% Farbe externer Verweise
@@ -195,7 +194,7 @@ void ParticleFilter::createSamples (int nrOfParticles)
 }
 \end{lstlisting}
 
-\begin{lstlisting}[language=C++, caption=Draw particles from the particle set resetting their weight to 1.]
+\begin{lstlisting}[language=C++, caption=Draw particles from the particle set]
 void ParticleFilter::resample (int nrOfParticles)
 {
 	// TODO: implement (1P)
@@ -263,7 +262,6 @@ Nachfolgend, Beispiele für Objekte mit bekannten Ausmaßen, mit deren Hilfe let
 \linebreak
 \textbf{UPDATE }Damit der Algorithmus weiß, um welche Skaliergröße es sich gerade handelt soll entweder der Kameramann angeben, dass im Blickpunkt sich z.B.: das Tor befindet. Oder es muss noch ein automatischer Klassifizierungsalgorithmus hinzugefügt werden, welcher z.B.: den Mittelkreis über dessen Form, oder den Strafraum über seine rechteckige Form vor dem Tor erkennt.
 \subsection{Kameraeinstellung}
-\todo[inline]{Nur die Komponenten der Kameragleichung erklären und darauf verweisen dass die zusammen Tw<-b ergeben.}
 Ein Bildpunkt im Weltkoordinatensystem kann auf das Kamerasystem mit nachfolgender Gleichung umgerechnet werden:\\
 \begin{small}
 \begin{equation}
@@ -284,53 +282,43 @@ Ein Bildpunkt im Weltkoordinatensystem kann auf das Kamerasystem mit nachfolgend
 \label{eq:Kameragleichung}
 \end{equation}
 \end{small}
-Die Transformationsmatrix wird mit der nachfolgenden Gleichung \ref{eq:Transformationsmatrix} beschrieben.\\
-\begin{small}
+Die Elemente mit der sich die Transformationsmatrix berechnet, sind in den Termen (\ref{eq:Entf})-(\ref{eq:rotY}) beschrieben. Wobei (\ref{eq:Entf}) die Entfernung des Balls zum Ursprung, (\ref{eq:rotZ}) die Rotation um Z und (\ref{eq:rotY}) die Rotation um Y definiert. Da die Kamera immer auf der selben Höhe stehen bleibt entfällt die Rotation um X (?!?).\\
 \begin{equation}
-\textbf{T}_{W\leftarrow B}=
 \begin{pmatrix}
 1 & &  & x_{Ball} \\
  & 1 & & y_{Ball} \\
  & & 1 & z_{Ball} \\
  & & & 1
 \end{pmatrix}
-\cdot
+\label{eq:Entf}
+\end{equation}
+\begin{equation}
 \begin{pmatrix}
-1 & &  & \\
- & cos \alpha_{r} & -sin \alpha_{r} & \\
- & sin \alpha_{r} & cos \alpha_{r} & \\
+cos \alpha_{r} & -sin \alpha_{r} & & \\
+sin \alpha_{r} & cos \alpha_{r} & & \\
+ & & 1 & \\
  & & & 1
 \end{pmatrix}
-\cdot
+\label{eq:rotZ}
+\end{equation}
+\begin{equation}
 \begin{pmatrix}
 cos \beta_{r} & & sin \beta_{r} & \\
  & 1 & & \\
 -sin \beta_{r} & & cos \beta_{r} & \\
  & & & 1
 \end{pmatrix}
-\cdot
-\begin{pmatrix}
-cos \gamma_{r} & -sin \gamma_{r} & & \\
-sin \gamma_{r} & cos \gamma_{r} & & \\
- & & 1 & \\
- & & & 1
-\end{pmatrix}
-\label{eq:Transformationsmatrix}
-\end{equation}  
-\end{small}
+\label{eq:rotY}
+\end{equation}
 \linebreak
-Hier sind $\alpha_{r}, \beta_{r}, \gamma_{r}$ die Winkel zwischen dem ursprünglichen und dem um jeweils die drei Achsen verdrehten Koordinatenkreuz, die allerdings variabel sind. Repräsentativ für die anderen Winkel soll die Winkelberechnung anhand der Beziehung für $\alpha_{r}$ erläutert werden, die in Abb. \ref{abb:alpharBerechnung} veranschaulicht ist.\\
+Hier sind $\alpha_{r}, \beta_{r}$ die Winkel zwischen dem ursprünglichen und dem, um jeweils die Achsen verdrehten Koordinatenkreuz, die allerdings variabel sind. Repräsentativ für den anderen Winkel soll die Winkelberechnung anhand der Beziehung für $\alpha_{r}$ erläutert werden, die in Abb. \ref{abb:alpharBerechnung} veranschaulicht ist.\\
 \linebreak
-Die blaue Strecke teilt das Feld in zwei Bereiche auf, sie ist gleichzeitig die Spiegelachse für $alpha_{r}$ und orientiert sich an der Kameraposition (hier ist $x=0$). So haben Strecken, die parallel zur Torlinie verlaufen, aus dieser Perspektive in der linken Hälfte eine positive Steigung und in der rechten eine negative Steigung. Aus diesem Grund muss hier auch eine Fallunterscheidung gemacht werden, sodass $\alpha_{r}$ immer über das Winkel/Positionsverhältnis berechnet, wie in Gleichung \ref{eq:alphar} beschrieben. Eine Ähnliche Berechnung muss für die beiden anderen Verdrehungswinkel des Koordinatenkreuzes durchgeführt werden ($ \beta , \gamma$) 
-\todo[inline]{
--Per Schaubild verdeutlichen wieso man alle winkel braucht.\\
--dk1k2 ausformelieren ?
-}.
+Die blaue Strecke teilt das Feld in zwei Bereiche auf, sie ist gleichzeitig die Spiegelachse für $alpha_{r}$ und orientiert sich an der Kameraposition (hier ist $x=0$). So haben Strecken, die parallel zur Torlinie verlaufen, aus dieser Perspektive in der linken Hälfte eine positive Steigung und in der rechten eine negative Steigung. Aus diesem Grund muss hier auch eine Fallunterscheidung gemacht werden, sodass $\alpha_{r}$ immer über das Winkel/Positionsverhältnis berechnet, wie in Gleichung \ref{eq:alphar} beschrieben. Eine Ähnliche Berechnung muss für die beiden anderen Verdrehungswinkel des Koordinatenkreuzes durchgeführt werden ($ \beta$).
 \begin{equation}
 \alpha_{r} = 
 \begin{cases}
-	\frac{\pi}{2} - (\frac{\pi}{2}-\alpha_{1,min}\frac{b'}{x}) & wenn \ x\geq 0  \\
-    \frac{\pi}{2} - (\frac{\pi}{2}-\alpha_{2,min}\frac{b-b'}{x}) & wenn \ x\leq 0 \\
+	[\frac{\pi}{2} - (\frac{\pi}{2}-\alpha_{1,min})]\frac{b'}{x} & wenn \ x\geq 0  \\
+    [\frac{\pi}{2} - (\frac{\pi}{2}-\alpha_{2,min})]\frac{b-b'}{x} & wenn \ x\leq 0 \\
 \end{cases}
 \label{eq:alphar}
 \end{equation}
@@ -340,7 +328,6 @@ Die blaue Strecke teilt das Feld in zwei Bereiche auf, sie ist gleichzeitig die 
 \caption{Veranschaulichung für die $\alpha_{r}$-Berechnung}
 \label{abb:alpharBerechnung}
 \end{figure}
-\todo[inline]{Skalierungsfaktor vor den ganzen Term schieben}
 \subsection{Beurteilung}
 Da beim Fußball schon wenige cm entscheidend sind, sollte der einzusetzende Algorithmus genaue Ergebnisse liefern, da \glqq Fehlentscheidungen\grqq \ ansonsten den Zuschauer verärgern können. Die unter diesen Bedingungen, gezeigten Methoden haben vermutlich nur eine begrenzte Genauigkeit, je nachdem wie exakt ein Objekt mit bekannter Größe erfasst wird (Negativbeispiel: Auflösung des Fußballs bei Aufnahme aus der Entfernung).
 \section{Der einäugige Ballfangkönig (1 Punkt)}
