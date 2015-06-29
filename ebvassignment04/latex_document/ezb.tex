@@ -392,7 +392,7 @@ $v_y = v_0 * sin(\alpha)$
 	\caption{Geschwindigkeitsvektoren $v_0$, $v_x$ sowie $v_y$}
 	\label{abb:geschwindigkeiten}
 \end{figure}
-Mittels des Geschwindigkeit-Zeit-Gesetzes, wo ebenso die Erdbeschleunigung ($g = 9.81m/s^2$) und Steigzeit $t_H$ einbezogen wird, lässt sich die Geschwindigkeit $v_y$ bei einem schrägen Wurf wie folgt berechnen:
+Mittels des Geschwindigkeit-Zeit-Gesetzes, wo ebenso die Erdbeschleunigung ($g \approx 9.81m/s^2$) und Steigzeit $t_H$ einbezogen wird, lässt sich die Geschwindigkeit $v_y$ bei einem schrägen Wurf wie folgt berechnen:
 \begin{center}
 $v_y = v_0 * sin(\alpha) - g * t_H$
 \end{center}
@@ -411,10 +411,9 @@ Anschließend kann die maximale Wurfhöhe $y_{max}$ unter Verwendung des Ort-Zei
 \begin{center}
 $y_{max} = y_0 + v_0 * sin(\alpha) * t_H - g * (t_{H})^{2}$
 \end{center}
-Wenn nun die Länge der maximalen Ballhöhe, wie in Abbildung \ref{abb:ballflugbahn} zu sehen ist, bekannt ist, verfügt man über einen Skalenmaßstab mit dem zum Beispiel der Balldurchmesser bestimmt werden kann. Es handelt sich hierbei jedoch nur um eine Approximation, da die z-Richtung des Wurfes nicht mit einbezogen wurde. 
+Wenn nun die Länge der maximalen Wurfhöhe, wie in Abbildung \ref{abb:ballflugbahn} zu sehen ist, bekannt ist, verfügt man über einen Skalenmaßstab mit dem zum Beispiel der Balldurchmesser bestimmt werden kann. Es handelt sich hierbei jedoch nur um eine Approximation, da die z-Richtung des Wurfes nicht mit einbezogen wurde. 
 
 Für ein genaueres Ergebnis könnte die Tiefeninformation über den zuvor beschriebenen Tiefenschärfe-Ansatz einbezogen werden, sodass beide Verfahren kombiniert werden.
-\todo[inline]{Kann man das so schreiben? Oder sollten wir das lieber weglassen mit der kombinierten Variante, da wir die ja nicht weiter erläutern werden?}
 
 \subsubsection*{Zweiter Ansatz}
 Das zweite Verfahren zur Bestimmung des Skalenmaßstabs über die Ballflugbahn macht sich das Unabhängigkeitsgesetz zu nutze. Der Ball bewegt sich von der maximalen Wurfhöhe zum Zeitpunkt $t_2$ aus kurvenförmig zum Boden hin. Wenn ein weiterer Ball von der maximalen Höhe zum Zeitpunkt $t_2$ im freien Fall nach unten fallen würde, würden beide Bälle den Boden zum selben Zeitpunkt erreichen. Dieses Phänomen machen wir uns zu nutze, indem wir die Strecke $h$ für den freien Fall ermitteln, also die Entfernung von der maximalen Wurfhöhe bis zum Aufprall (siehe Abbildung \ref{abb:freierfall}). Diese Strecke $h$ wird mittels folgender Gleichung berechnet:
@@ -428,8 +427,8 @@ $h = \dfrac{g * (t_H)^2}{2}$
 	\label{abb:freierfall}
 \end{figure}
 $t_H$ ist in diesem Fall die Fallzeit von $t_2$ bis zum Aufprall auf dem Boden. Aufgrund des Unabhängigkeitsgesetzes ist die Fallzeit über die Bildaufnahmen bekannt.
-Diese Strecke $h$ stellt ebenso einen Skalenmaßstab im Bild dar, wodurch unter anderem der Balldurchmesser ermittelt werden kann. Auch bei diesem Verfahren handelt es sich nur um eine Approximation, da die z-Richtung des Wurfes nicht mit einbezogen wird. Das Ergebnis reicht jedoch für unseren Anwendungsfall aus.
-\todo[inline]{Kann man dazu Approximation sagen o.O?}
+Diese Strecke $h$ stellt ebenso einen Skalenmaßstab im Bild dar, wodurch unter anderem der Balldurchmesser ermittelt werden kann. Auch bei diesem Verfahren handelt es sich nur um eine Approximation, da die z-Richtung des Wurfes nicht mit einbezogen wird.
+
 Hinzu kommt, dass bei den Berechnungen angenommen wurde, dass kein Luftwiderstand vorhanden ist (Annahme erfolgte ebenso bei der Programmieraufgabe).
 
 
