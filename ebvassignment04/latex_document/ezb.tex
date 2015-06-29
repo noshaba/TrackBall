@@ -243,7 +243,6 @@ void ParticleFilter::resample (int nrOfParticles)
 }
 \end{lstlisting}
 
-
 Auf einem Rechner mit einem Intel Pentium 1.4GHz Prozessor, 4GB RAM, zwei Kernen und keiner externen GPU benötigt das Programm im Durchschnitt pro Bild 200ms. Wenn man die Framerate auf 25 FPS schätzt, muss ein Bild in 1/25s = 0.04s = 40ms  abgehandelt werden, damit man auf 25 Bilder pro Sekunde kommt und das Programm in Echtzeit abläuft. Dies ist leider auf diesem Rechner nicht der Fall. Auch bei einer Schätzung von 24 FPS würde das Programm nicht in Echtzet ablaufen, da es hierfür ein Bild in 41.67 ms abhandeln müsste. Auf dem Rechner benötigt das Programm für 25 Frames ca. 5 Sekunden.
 
 \newpage
