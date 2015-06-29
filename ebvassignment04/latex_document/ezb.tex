@@ -243,8 +243,10 @@ void ParticleFilter::resample (int nrOfParticles)
 }
 \end{lstlisting}
 
-Auf einem Rechner mit einem Intel Pentium 1.4GHz Prozessor, 4GB RAM, zwei Kernen und keiner externen GPU benötigt das Programm im Durchschnitt pro Bild 200ms. Wenn man die Framerate auf 25 FPS schätzt, muss ein Bild in 1/25s = 0.04s = 40ms  abgehandelt werden, damit man auf 25 Bilder pro Sekunde kommt und das Programm in Echtzeit abläuft. Dies ist leider auf diesem Rechner nicht der Fall. Auch bei einer Schätzung von 24 FPS würde das Programm nicht in Echtzet ablaufen, da es hierfür ein Bild in 41.67 ms abhandeln müsste. Auf dem Rechner benötigt das Programm für 25 Frames ca. 5 Sekunden.\\
 \newpage
+
+Auf einem Rechner mit einem Intel Pentium 1.4GHz Prozessor, 4GB RAM, zwei Kernen und keiner externen GPU benötigt das Programm im Durchschnitt pro Bild 200ms. Wenn man die Framerate auf 25 FPS schätzt, muss ein Bild in $\frac{1}{25}$s = 0.04 s = 40 ms  abgehandelt werden, damit man auf 25 Bilder pro Sekunde kommt und das Programm in Echtzeit abläuft. Dies ist leider auf diesem Rechner nicht der Fall. Auch bei einer Schätzung von 24 FPS würde das Programm nicht in Echtzet ablaufen, da es hierfür ein Bild in 41.67 ms abhandeln müsste. Auf dem Rechner benötigt das Programm für 25 Frames ca. 5 Sekunden.
+
 \section{Freistoß (4 Punkte)}
 Bei einer Fußball-TV-Übertragung soll für den Zuschauer die Zone in das Bild eingezeichnet werden, auf der sich kein Gegenspieler bei einem Freistoß befinden darf.
 \subsection{Allgemein}
@@ -291,7 +293,7 @@ Die Transformationsmatrix beinhaltet nur die Verschiebung des Balls zum Ursprung
 \linebreak
 Hier soll nun $\alpha_{r}$ die Verdrehung um die Z-Achse veranschaulichen. $\alpha_{r}$ ist der Winkel zwischen dem ursprünglichen und dem, um eine Achse verdrehtes Koordinatenkreuz. Dieser ist variabel und nähert sich immer mehr $\frac{\pi}{2}$, je mehr er sich der Kamera bzw. der blauen Linie nähert. Repräsentativ für den anderen Winkel soll die Winkelberechnung anhand der Beziehung für $\alpha_{r}$ erläutert werden, die in Abb. \ref{abb:alpharBerechnung} veranschaulicht ist.\\
 \linebreak
-Die blaue Strecke teilt das Feld in zwei Bereiche auf, sie ist gleichzeitig die Spiegelachse für $\alpha_{r}$ und orientiert sich an der Kameraposition (hier ist $x=0$). So haben Strecken, die parallel zur Torlinie verlaufen, aus dieser Perspektive in der linken Hälfte eine positive Steigung und in der rechten eine negative Steigung. Aus diesem Grund muss hier auch eine Fallunterscheidung gemacht werden, sodass $\alpha_{r}$ immer über das Winkel/Positionsverhältnis berechnet wird, wie in Gleichung \ref{eq:alphar} beschrieben. Eine Ähnliche Berechnung muss für den Verkippungswinkel (um X) des Koordinatenkreuzes durchgeführt werden. [Hängt $\beta$ von der Blauen linie ab, oder ist beta überall gleich? Wenn überall gleich bitte nachfolgenden satz streichen/umschreiben]. $\beta$ wird dann ähnlich wie $\alpha$ über das Verhältnis von min. und max. Ballposition in Z Richtung ermittelt\\
+Die blaue Strecke teilt das Feld in zwei Bereiche auf, sie ist gleichzeitig die Spiegelachse für $\alpha_{r}$ und orientiert sich an der Kameraposition (hier ist $x=0$). So haben Strecken, die parallel zur Torlinie verlaufen, aus dieser Perspektive in der linken Hälfte eine positive Steigung und in der rechten eine negative Steigung. Aus diesem Grund muss hier auch eine Fallunterscheidung gemacht werden, sodass $\alpha_{r}$ immer über das Winkel/Positionsverhältnis berechnet wird, wie in Gleichung \ref{eq:alphar} beschrieben. Eine Ähnliche Berechnung muss für den Verkippungswinkel (um X) des Koordinatenkreuzes durchgeführt werden. $\beta$ wird dann ähnlich wie $\alpha$ über das Verhältnis von min. und max. Ballposition in Z Richtung ermittelt\\
 \begin{equation}
 \alpha_{r} = 
 \begin{cases}
@@ -322,6 +324,7 @@ Der Balldurchmesser kann demnach mit Hilfe der internen Kamerabemaßungen und de
 \caption{Veranschaulichung für die Balldurchmesserberechnung mit Hilfe der Tiefenschärfe.}
 \label{abb:Strahlensatz}
 \end{figure}
+
 \begin{center}
 $\frac{\overline{AB}}{\overline{A'B'}} = \frac{\overline{ZA}}{\overline{ZA'}} = \frac{\overline{ZA}}{\overline{ZA}+\overline{AA'}}$\\ \vspace{0.5cm}
 $(\overline{ZA}+\overline{AA'})\frac{\overline{AB}}{\overline{A'B'}}-\overline{ZA}=0$\\ \vspace{0.5cm}
