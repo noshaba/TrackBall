@@ -5,6 +5,7 @@
 \usepackage{wrapfig}
 \usepackage{longtable}
 \usepackage{amssymb}
+\usepackage{epstopdf}
 \usepackage[colorlinks,        	% Links ohne Umrandungen in zu wählender Farbe
    linkcolor=black,   			% Farbe interner Verweise
    filecolor=black,   			% Farbe externer Verweise
@@ -194,7 +195,7 @@ void ParticleFilter::createSamples (int nrOfParticles)
 }
 \end{lstlisting}
 
-\begin{lstlisting}[language=C++, caption=Draw particles from the particle set]
+\begin{lstlisting}[language=C++, caption=Draw particles from the particle set resetting their weight to 1.]
 void ParticleFilter::resample (int nrOfParticles)
 {
 	// TODO: implement (1P)
@@ -241,27 +242,33 @@ void ParticleFilter::resample (int nrOfParticles)
 	particle = pNew;
 }
 \end{lstlisting}
+
 \newpage
+
+Auf einem Rechner mit einem Intel Pentium 1.4GHz Prozessor, 4GB RAM, zwei Kernen und keiner externen GPU benötigt das Programm im Durchschnitt pro Bild 200ms. Wenn man die Framerate auf 25 FPS schätzt, muss ein Bild in $\frac{1}{25}$s = 0.04 s = 40 ms  abgehandelt werden, damit man auf 25 Bilder pro Sekunde kommt und das Programm in Echtzeit abläuft. Dies ist leider auf diesem Rechner nicht der Fall. Auch bei einer Schätzung von 24 FPS würde das Programm nicht in Echtzet ablaufen, da es hierfür ein Bild in 41.67 ms abhandeln müsste. Auf dem Rechner benötigt das Programm für 25 Frames ca. 5 Sekunden.
+
 \section{Freistoß (4 Punkte)}
 Bei einer Fußball-TV-Übertragung soll für den Zuschauer die Zone in das Bild eingezeichnet werden, auf der sich kein Gegenspieler bei einem Freistoß befinden darf.
 \subsection{Allgemein}
-Der Algorithmus orientiert sich an bekannten Objekten, deren Dimensionen im physikalischen Raum ihm bekannt sind. Die meisten Bemaßungen auf einem Fußballfeld sind festgeschrieben und falls es hiervon Abweichungen gibt, können diese vor Spielbeginn eingeholt und händisch eingetragen werden.\\
+Der Algorithmus orientiert sich an bekannten Objekten, deren Dimensionen ihm im physikalischen Raum bekannt sind. Die meisten Bemaßungen auf einem Fußballfeld sind festgeschrieben und falls es hiervon Abweichungen gibt, können diese vor Spielbeginn eingeholt und händisch eingetragen werden.\\
 \linebreak
 Das Fußballfeld ist rechteckig, aber je nach Blickwinkel der Kamera ergeben sich Bildverzerrungen (beispielsweise erscheint der Platz, wenn die Kamera flach, von der Seite sowie mittig auf das Spielfeld schaut, trapezförmig). Diese Verzerrung muss ebenso beim Kreis berücksichtigt werden. So wird aus dem Kreis eine Ellipse, deren kurze Diagonale umso größer wird, je näher die Ellipse an der Kamera ist. Diese Verzerrung kann durch die Kameragleichung ermittelt werden (siehe Gleichung \ref{eq:Kameragleichung})\\
 \linebreak
 Wenn nun bekannt ist, mit welchen Parametern die Ellipse eingezeichnet werden soll, gibt es hierfür zwei Möglichkeiten, diese um den Ball, als Mittelpunkt zu zeichnen. Zum einen kann statisch festlegen werden, dass das Kamerabild genau an einer Stelle stehen bleibt und erst beim Anspielen wieder geschwenkt werden darf, da sich ab hier der Kreis wieder auflösen soll - so muss die Zone nur einmal berechnet und eingetragen werden. Für die nachfolgenden Bilder
-kann diese dann einfach rein kopiert werden. \\
+kann diese dann einfach rein kopiert werden.\\ 
+\linebreak
+Die einzelnen Punkte des Kreises werden mithilfe der Kameragleichung eingezeichnet. Dafür müssen natürlich Parameter wie Verzerrung der Kamera bekannt sein. Für die Kameragleichung wird auch eine Transformationsmatrix benötigt. Näheres zur Berechnung siehe Abschnitt \ref{b:kam}. Als Skalenmaßstab kann eine Größe einer der Skalierobjekte genommen werden, da diese eine genormete Größe haben.\\
 \linebreak
 Die andere Möglichkeit besteht darin, den Freistoß-Kreis beim Zoom-Vorgang zu zeigen. Hierfür werden mindestens zwei Bilder benötigt, auf denen Objekte zu sehen sind, deren reale Größe bekannt sind (siehe \ref{b:skaliergr} Skaliergrößen). Im Mittelpunkt der Bilder ist der Ball und es werden wie gewohnt die Ellipsen berechnet. Da sich aber beim Zoomen die Zone im Folgebild vergrößert, kann nun ein $\vartriangle r$ berechnet werden und für die nächsten Aufnahmen (vor allem für diese, wo kein Objekt mit bekannter Größe zu erkennen ist) der Radius und dadurch die Ellipse definiert werden. Da dies einer linearen Zoom-Funktion entspricht, funktioniert dieses Verfahren ausschließlich bei konstanter Vergrößerungsgeschwindigkeit. Wenn mehr als zwei Aufnahmen zur Berechnung von $\vartriangle r$ verwendet und deren Ergebnis gemittelt werden, lässt sich dieser Faktor genauer einstellen.\\
 \linebreak
-\textbf{UPDATE }Optional kann der Kreis farblich markiert werden, wenn ein Gegenspieler sich innerhalb des Kreises befindet. Hierfür tippt der Kameramann die Personen an, die sich innerhalb der Zone befinden dürfen. Anschließend wird deren Positionen immer mit dem vorhergehenden Bild verglichen, um eine Falschmeldung auszuschließen, wenn die Signalfarbe gesetzt werden soll. Gegenspieler im Kreis werden über deren Position und farbliche Unterschiede zum jeweiligen Boden erkannt.\\
+Optional kann der Kreis farblich markiert werden, wenn ein Gegenspieler sich innerhalb des Kreises befindet. Hierfür tippt der Kameramann die Personen an, die sich innerhalb der Zone befinden dürfen. Anschließend wird deren Positionen immer mit dem vorhergehenden Bild verglichen, um eine Falschmeldung auszuschließen, wenn die Signalfarbe gesetzt werden soll. Gegenspieler im Kreis werden über deren Position und farbliche Unterschiede zum jeweiligen Boden erkannt.\\
 \linebreak
-\textbf{UPDATE }Um Verwechslungen und Fehlausstrahlung zu vermeiden soll der Kameramann zum einen, einen Bereich um den Kreis angeben, mit welcher der Algorithmus über Hough zur Ballposition kommt. Zum anderen soll der auszustrahlende Kreis nochmal von einer Person bestätigt werden, ob dieser ungefähr in Position und Größe richtig ermittelt wurde.
+Um Verwechslungen und Fehlausstrahlung zu vermeiden, soll der Kameramann zum einen, einen Bereich um den Kreis angeben, mit welcher der Algorithmus über Hough zur Ballposition kommt. Zum anderen soll der auszustrahlende Kreis nochmal von einer Person bestätigt werden, ob dieser ungefähr in Position und Größe richtig ermittelt wurde.
 \subsection{Skalierobjekte}\label{b:skaliergr}
 Nachfolgend, Beispiele für Objekte mit bekannten Ausmaßen, mit deren Hilfe letztlich die Freistoßzone definiert werden kann: Torlatte und -pfosten, Rasenmuster sowie die weiße Linien (darunter: Seiten- und Mittellinien, Strafraum und Anstoßkreis).\\
 \linebreak
-\textbf{UPDATE }Damit der Algorithmus weiß, um welches Skalierobjekt es sich gerade handelt soll entweder der Kameramann angeben, dass im Blickpunkt sich z.B.: das Tor befindet. Oder es muss noch ein automatischer Klassifizierungsalgorithmus hinzugefügt werden, welcher z.B.: den Mittelkreis über dessen Form, oder den Strafraum über seine rechteckige Form vor dem Tor erkennt.
-\subsection{Kameraeinstellung}
+Damit der Algorithmus weiß, um welches Skalierobjekt es sich gerade handelt soll entweder der Kameramann angeben, dass im Blickpunkt sich z.B.: das Tor befindet. Oder es muss noch ein automatischer Klassifizierungsalgorithmus hinzugefügt werden, welcher z.B.: den Mittelkreis über dessen Form, oder den Strafraum über seine rechteckige Form vor dem Tor erkennt.
+\subsection{Kameraeinstellung}\label{b:kam}
 Ein Bildpunkt im Weltkoordinatensystem kann auf das Kamerasystem mit nachfolgender Gleichung umgerechnet werden:\\
 \begin{small}
 \begin{equation}
@@ -282,11 +289,11 @@ Ein Bildpunkt im Weltkoordinatensystem kann auf das Kamerasystem mit nachfolgend
 \label{eq:Kameragleichung}
 \end{equation}
 \end{small}
-Die Transformationsmatrix beinhaltet nur die Verschiebung des Balls zum Ursprung und die Rotation um die Z- und X- Achse, die die Perspektive, Schwenken und das Nicken ausgleichen können. Da die Kamera aber nicht gieren kann, wäre eine Rotation um die Y-Achse nur nötig, um eine Kamerafehleinstellung auszugleichen (?).\\
+Die Transformationsmatrix beinhaltet nur die Verschiebung des Balls zum Ursprung und die Rotation um die Z- und X- Achse, die die Perspektive, Schwenken und das Nicken ausgleichen können. Da die Kamera aber nicht gieren kann, wäre eine Rotation um die Y-Achse nur nötig, um eine Kamerafehleinstellung auszugleichen.\\
 \linebreak
 Hier soll nun $\alpha_{r}$ die Verdrehung um die Z-Achse veranschaulichen. $\alpha_{r}$ ist der Winkel zwischen dem ursprünglichen und dem, um eine Achse verdrehtes Koordinatenkreuz. Dieser ist variabel und nähert sich immer mehr $\frac{\pi}{2}$, je mehr er sich der Kamera bzw. der blauen Linie nähert. Repräsentativ für den anderen Winkel soll die Winkelberechnung anhand der Beziehung für $\alpha_{r}$ erläutert werden, die in Abb. \ref{abb:alpharBerechnung} veranschaulicht ist.\\
 \linebreak
-Die blaue Strecke teilt das Feld in zwei Bereiche auf, sie ist gleichzeitig die Spiegelachse für $\alpha_{r}$ und orientiert sich an der Kameraposition (hier ist $x=0$). So haben Strecken, die parallel zur Torlinie verlaufen, aus dieser Perspektive in der linken Hälfte eine positive Steigung und in der rechten eine negative Steigung. Aus diesem Grund muss hier auch eine Fallunterscheidung gemacht werden, sodass $\alpha_{r}$ immer über das Winkel/Positionsverhältnis berechnet wird, wie in Gleichung \ref{eq:alphar} beschrieben. Eine Ähnliche Berechnung muss für den Verkippungswinkel (um X) des Koordinatenkreuzes durchgeführt werden. [Hängt $\beta$ von der Blauen linie ab, oder ist beta überall gleich? Wenn überall gleich bitte nachfolgenden satz streichen/umschreiben]. $\beta$ wird dann ähnlich wie $\alpha$ über das Verhältnis von min. und max. Ballposition in Z Richtung ermittelt\\
+Die blaue Strecke teilt das Feld in zwei Bereiche auf, sie ist gleichzeitig die Spiegelachse für $\alpha_{r}$ und orientiert sich an der Kameraposition (hier ist $x=0$). So haben Strecken, die parallel zur Torlinie verlaufen, aus dieser Perspektive in der linken Hälfte eine positive Steigung und in der rechten eine negative Steigung. Aus diesem Grund muss hier auch eine Fallunterscheidung gemacht werden, sodass $\alpha_{r}$ immer über das Winkel/Positionsverhältnis berechnet wird, wie in Gleichung \ref{eq:alphar} beschrieben. Eine Ähnliche Berechnung muss für den Verkippungswinkel (um X) des Koordinatenkreuzes durchgeführt werden. $\beta$ wird dann ähnlich wie $\alpha$ über das Verhältnis von min. und max. Ballposition in Z Richtung ermittelt\\
 \begin{equation}
 \alpha_{r} = 
 \begin{cases}
@@ -317,6 +324,7 @@ Der Balldurchmesser kann demnach mit Hilfe der internen Kamerabemaßungen und de
 \caption{Veranschaulichung für die Balldurchmesserberechnung mit Hilfe der Tiefenschärfe.}
 \label{abb:Strahlensatz}
 \end{figure}
+
 \begin{center}
 $\frac{\overline{AB}}{\overline{A'B'}} = \frac{\overline{ZA}}{\overline{ZA'}} = \frac{\overline{ZA}}{\overline{ZA}+\overline{AA'}}$\\ \vspace{0.5cm}
 $(\overline{ZA}+\overline{AA'})\frac{\overline{AB}}{\overline{A'B'}}-\overline{ZA}=0$\\ \vspace{0.5cm}
