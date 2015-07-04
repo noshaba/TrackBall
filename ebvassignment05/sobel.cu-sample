@@ -1,0 +1,13 @@
+#include "central.h"
+#include <cuda_runtime_api.h>
+#include "sobel.cuh"
+
+__global__ void sobelKernel (uchar* dstImg, uchar* srcImg, int rows, int cols)
+{
+    //TODO: implement the sobel operator (6P)
+}
+
+void sobel (Mat_<uchar>& dstImg, const Mat_<uchar>& srcImg)
+{
+    //TODO: implement (4P)
+}
