@@ -29,7 +29,11 @@ Um jeden einzelnen Roboter zu verfolgen, wird für jeden Roboter ein unabhängig
 Für diese Filter ist die reale Position sowie die Geschwindigkeit und deren Richtung als Vektor des Roboters der Zustandsraum. Die Dynamikfuntion setzt sich aus den Fahrkommandos, welche von jedem einzelnen Roboter geliefert werden, als Vektor zusammen. Die Messfunktion wird durch die Bestimmung der Position des Roboters im Bild (x,y im Bild) gebildet.\\
 Der Ball kann eindeutig von den Kreisen auf den Robotern unterschieden werden, da er nicht vor schwarzen Hintergrund liegt (hier nehmen wir an, dass die Spielfläche nicht schwarz ist). Mit diesen Voraussetzungen lässt sich der Ball genau wie die Billardkugel aus der Vorlesung verfolgen.
 \section{Hinterm Horizont gehts weiter}
+Die Kamera nimmt von einem Flugzeug aus die Landebahn auf, wie es in Abbildung \ref{} dargestellt ist. Hierbei erkennt das Bildverarbeitungssystem zwei Geraden, die die Landebahn bilden und parallel zueinander liegen. Der Abstand zwischen den Geraden ist bekannt. Die Kamera hat einen schrägen Blickwinkel auf die Landebahn, da ansonsten keine Landebahn im Blickfeld der Kamera wäre. Es ist demnach ein Fluchtpunkt vorhanden, der sich ermitteln lässt, indem der Schnittpunkt der Geraden ermittelt wird. Ein Fluchtpunkt kann sich hierbei auch außerhalb des Bildes befinden. Es müssen lediglich die Geraden vorhanden sein.
 
+Eine Kamera verfügt über sechs Freiheitsgerade – die Translation in x-, y- und z-Richtung sowie die Rotation um die x mit dem Winkel $\alpha$, y mit dem Winkel $\beta$ und z Achse mit dem Winkel $\gamma$. Diese Kameraparameter beschreiben die Verschiebung  der Kamera zum Ursprung des Weltkoodinatensystems und die Drehung um die drei Euler Winkel. Es gibt jedoch einen Freiheitsgrad, der nicht beobachtet werden kann – die Translation in y-Richtung, wie es in den beiden Abbildungen \ref{} und \ref{} zu sehen ist. Dies liegt daran, dass sich die Geraden (Landebahn) auf der Bodenebene (X,Y) liegen.
+
+% siehe Ansatz zur Posenbestimmung: http://userpages.uni-koblenz.de/~cg/Diplomarbeiten/DA_BernhardReinert.pdf
 
 %-------Text-End------------------------------------------
 \end{document}
