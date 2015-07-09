@@ -23,6 +23,11 @@
 %-------Text-Start------------------------------------------
 \section{Harte Kante auf der Grafikkarte}
 \section{Schwarz und Weiß wir stehen an Eurer Seite}
+Zunächst müssen alle Roboter eindeutig voneinander unterscheidbar sein. Hierzu wird jedem der Roboter eine eindeutige Farbe zugeordnet. Zudem erhält jeder Roboter einen weißen Kreis innerhalb eines schwarzen Kreises in der Mitte der zur Kamera gerichteten Fläche, welcher zur Identifizierung eines Roboters dient.\\
+Nun kann jeder Roboter eindeutig identifiziert werden und es kann zudem hinterlegt werden, welche Roboter (welche Farben) zu welcher Mannschaft gehören.
+Um jeden einzelnen Roboter zu verfolgen, wird für jeden Roboter ein unabhängiger Partikelfilter eingesetzt.\\
+Für diese Filter ist die reale Position sowie die Geschwindigkeit und deren Richtung als Vektor des Roboters der Zustandsraum. Die Dynamikfuntion setzt sich aus den Fahrkommandos, welche von jedem einzelnen Roboter geliefert werden, als Vektor zusammen. Die Messfunktion wird durch die Bestimmung der Position des Roboters im Bild (x,y im Bild) gebildet.\\
+Der Ball kann eindeutig von den Kreisen auf den Robotern unterschieden werden, da er nicht vor schwarzen Hintergrund liegt (hier nehmen wir an, dass die Spielfläche nicht schwarz ist). Mit diesen Voraussetzungen lässt sich der Ball genau wie die Billardkugel aus der Vorlesung verfolgen.
 \section{Hinterm Horizont gehts weiter}
 
 
