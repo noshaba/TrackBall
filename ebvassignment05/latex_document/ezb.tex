@@ -108,9 +108,27 @@ Theoretisch kann auch eine mittlere Geschwindigkeit des Balls, anhand zweier Bil
 %Über den Ball haben wir keine dynamischen Informationen, weshalb die Geschwindigkeit des Balls anhand der Positionen im Bild ermittelt wird, indem die zurückgelegte Strecken zwischen den Bildern berechnet wird. Nach einigen Einzelbildern können wir nun aus den Daten eine Dynamikfuntion herleiten, indem wir die Geschwindigkeit proportional zur Reibungskraft ändern.\\
 %Sollte der Ball nicht mehr im Bild zu erkennen sein, da er aus dem Bildbereich gefolgen ist oder sich direkt über einem Roboter befindet und nicht von der Markierung des Roboters unterschieden werden kann, wird der Partikelfilter neu initialisiert, sobald der ball wieder erfasst wurde. Dies ist ohne Weiteres möglich, da der Ball im Normalfall immer eindeutig identifiziert werden kann.
 \section{Hinterm Horizont gehts weiter}
-Die Kamera nimmt von einem Flugzeug aus die Landebahn auf, wie es in Abbildung \ref{} dargestellt ist. Hierbei erkennt das Bildverarbeitungssystem zwei Geraden, die die Landebahn bilden und parallel zueinander liegen. Der Abstand zwischen den Geraden ist bekannt. Die Kamera hat einen schrägen Blickwinkel auf die Landebahn, da ansonsten keine Landebahn im Blickfeld der Kamera wäre. Es ist demnach ein Fluchtpunkt vorhanden, der sich ermitteln lässt, indem der Schnittpunkt der Geraden ermittelt wird. Ein Fluchtpunkt kann sich hierbei auch außerhalb des Bildes befinden. Es müssen lediglich die Geraden vorhanden sein.
+Die Kamera nimmt von einem Flugzeug aus die Landebahn auf, wie es in Abbildung \ref{landebahnAufgBild} dargestellt ist. Hierbei erkennt das Bildverarbeitungssystem zwei Geraden, die die Landebahn bilden und parallel zueinander liegen. Der Abstand zwischen den Geraden ist bekannt. Die Kamera hat einen schrägen Blickwinkel auf die Landebahn, da ansonsten keine Landebahn im Blickfeld der Kamera wäre. Es ist demnach ein Fluchtpunkt vorhanden, der sich ermitteln lässt, indem der Schnittpunkt der Geraden ermittelt wird. Ein Fluchtpunkt kann sich hierbei auch außerhalb des Bildes befinden. Es müssen lediglich die Geraden vorhanden sein.
 
-Eine Kamera verfügt über sechs Freiheitsgrade – die Translation in x-, y- und z-Richtung sowie die Rotation um die x mit dem Winkel $\alpha$, y mit dem Winkel $\beta$ und z Achse mit dem Winkel $\gamma$. Diese Kameraparameter beschreiben die Verschiebung  der Kamera zum Ursprung des Weltkoodinatensystems und die Drehung um die drei Euler Winkel. Es gibt jedoch einen Freiheitsgrad, der nicht beobachtet werden kann – die Translation in y-Richtung, wie es in den beiden Abbildungen \ref{} und \ref{} zu sehen ist. Dies liegt daran, dass sich die Geraden (Landebahn) auf der Bodenebene (X,Y) liegen.
+\begin{figure}[htbp]
+	\centering
+	\fbox{
+		\includegraphics[scale=0.3]{landebahnAufgBild.png}
+	}
+	\caption{Landebahn mit Fluchtpunkt}
+	\label{landebahnAufgBild}
+\end{figure}
+
+Eine Kamera verfügt über sechs Freiheitsgerade – die Translation in x-, y- und z-Richtung sowie die Rotation um die x mit dem Winkel $\alpha$, y mit dem Winkel $\beta$ und z Achse mit dem Winkel $\gamma$. Diese Kameraparameter beschreiben die Verschiebung  der Kamera zum Ursprung des Weltkoodinatensystems und die Drehung um die drei Euler Winkel. Es gibt jedoch einen Freiheitsgrad, der nicht beobachtet werden kann – die Translation in y-Richtung, wie es in der Abbildung \ref{yTranslation} zu sehen ist. Dies liegt daran, dass sich die Geraden (Landebahn) auf der Bodenebene (X,Y) liegen.
+
+\begin{figure}[htbp]
+	\centering
+	\fbox{
+		\includegraphics[scale=0.7]{yTranslation.png}
+	}
+	\caption{Links: Translation in y-Richtung = 0; Rechts: Translation in y-Richtung = 1000}
+	\label{yTranslation}
+\end{figure}
 
 Ein Punkt $X$ mit den Koordinaten $(X,Y,Z)$ in der realen Welt hat einen korrespondierenden Punkt $x$ mit den Koordinaten $(u,v)$ auf der Bildebene. Die Punkte aus dem Raum (3D) können über die Projektionsmatrix $P$ in Punkte auf der Bildebene (2D) umgerechnet werden.
 
