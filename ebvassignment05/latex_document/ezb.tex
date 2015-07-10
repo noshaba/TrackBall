@@ -102,6 +102,109 @@ Die Kamera nimmt von einem Flugzeug aus die Landebahn auf, wie es in Abbildung \
 
 Eine Kamera verfügt über sechs Freiheitsgerade – die Translation in x-, y- und z-Richtung sowie die Rotation um die x mit dem Winkel $\alpha$, y mit dem Winkel $\beta$ und z Achse mit dem Winkel $\gamma$. Diese Kameraparameter beschreiben die Verschiebung  der Kamera zum Ursprung des Weltkoodinatensystems und die Drehung um die drei Euler Winkel. Es gibt jedoch einen Freiheitsgrad, der nicht beobachtet werden kann – die Translation in y-Richtung, wie es in den beiden Abbildungen \ref{} und \ref{} zu sehen ist. Dies liegt daran, dass sich die Geraden (Landebahn) auf der Bodenebene (X,Y) liegen.
 
+Ein Punkt $X$ mit den Koordinaten $(X,Y,Z)$ in der realen Welt hat einen korrespondierenden Punkt $x$ mit den Koordinaten $(u,v)$ auf der Bildebene. Die Punkte aus dem Raum (3D) können über die Projektionsmatrix $P$ in Punkte auf der Bildebene (2D) umgerechnet werden.
+
+Die Projektionsmatrix hängt hierbei von den Orientierungsparametern ab. Die inneren Kameraparameter sind uns bekannt, da es sich in diesem Fall um eine kalibrierte Kamera handelt. Was wir benötigen, sind die äußeren Parameter der Kamera - die Lage der Kamera im Raum sowie die Blickrichtung der Kamera. Es muss demzufolge die Pose bestimmt werden.
+
+Der Zusammenhang zwischen Objekt- und Bildpunkt lässt sich unter Verwendung der Projektionsmatrix, wie in der Matrizengleichung \ref{projectionmatrix} dargestellt, definieren.
+
+\begin{equation} \label{projectionmatrix}
+\begin{bmatrix}
+u \\
+v \\
+w 
+\end{bmatrix}
+=
+\begin{bmatrix}
+p_{11} & p_{12} & p_{13} & p_{14} \\
+p_{21} & p_{22} & p_{23} & p_{24} \\
+p_{31} & p_{32} & p_{33} & p_{34} 
+\end{bmatrix}
+\begin{bmatrix}
+X \\
+Y \\
+Z \\
+W
+\end{bmatrix}
+\end{equation}  
+
+Die Matrix $P$ hat 12 Einträge und 11 Freiheitsgeraden, da der Skalierungsfaktor ignoriert werden kann. Theoretisch wird für das Lösen des Gleichungssystems 11 Gleichungen benötigt. In unserem Fall haben wir einige Annahmen und Vorgaben, die die Berechnung vereinfacht. Die Projektionsmatrix beinhaltet zum einen die Kalibrierungsmatrix und zum anderen die Rotationsmatrix. Da wir über die Kalibrieungsmatrix verfügen, besitzen wir bereits 5 Freiheitsgerade. Demnach fehlen nur noch die Freiheitsgerade für die Rotation (3 DOF) und Translation (3 DOF). Durch die Reduktion der Freiheitsgerade wäre es jetzt bereits möglich durch 3 bekannte Punkte die Lösungsmenge auf vier Lösungen zu reduzieren. Bei vier Punkten würde man eine eindeutige Lösung erhalten.
+
+Wir können uns zur Vereinfachung einen weiteren Aspekt anschauen. Da die Landebahn auf der Bodenebene (X,Y) liegt, kann die z-Komponente ignoriert werden. Es führt zu einer singulären Lösungsmatrix. Mit Hilfe der Homographie kann die Projektionsmatrix sowie Rotation/Translation, falls die Kalibrierungsmatrix $K$ vorhanden ist, berechnet werden.
+
+Die Homographie $H$ beschreibt die Abbildung zwischen zwei Flächen, in unserem Fall ist es die Landebahn. In der Gleichung \ref{homographie} ist die Definition dargestellt.
+
+\begin{equation} \label{homographie}
+\begin{bmatrix}
+x_'1 \\
+x_'2 \\
+1 
+\end{bmatrix}
+=
+\begin{bmatrix}
+h_{11} & h_{12} & h_{13} \\
+h_{21} & h_{22} & h_{23} \\
+h_{31} & h_{32} & h_{33} 
+\end{bmatrix}
+\begin{bmatrix}
+x_1 \\
+x_2 \\
+1 \\
+\end{bmatrix}
+\end{equation} 
+
+Es wird nun angenommen, dass für die Fläche in der realen Welt $Z=0$ gilt. Demnach kann jeder Punkt wie folgt ausgedrückt werden: $P=(X, Y, 0, 1)^T)$.
+Die Projektionsmatrix ist definiert durch $P=K[R|t]$, wobei $t=-RC$ ist. $C$ stellt hierbei das Kameracenter dar. Die Abbildung zwischen 3D und 2D ist durch $x=PX$ definiert. Demzufolge lässt sich folgende Gleichung aufstellen:
+
+\begin{equation}
+x=PX=K
+\begin{bmatrix}
+r_{1} | r_{2} | r_{3} | t 
+\end{bmatrix}
+=
+\begin{pmatrix}
+X \\
+Y \\
+0 \\
+1
+\end{pmatrix}
+\end{equation} 
+
+Bei $r_1, r_2$ und $r_3$ handelt es sich um die erste, zweite und dritte Spalte der Rotationsmatrix. Da $Z=0$ ist, kommt man auf $r_3 * Z = r_3 * 0 = (0,0,0)^T$. Demzufolge kann $r_3$ für die folgende Betrachtung weggelassen werden (Es gilt $K[r_1|r_2|t] \approxeq H$):
+\begin{equation}
+K
+\begin{bmatrix}
+r_{1} | r_{2} | t 
+\end{bmatrix}
+\begin{pmatrix}
+X \\
+Y \\
+1
+\end{pmatrix}
+=H
+\begin{pmatrix}
+X \\
+Y \\
+1
+\end{pmatrix}
+\end{equation} 
+
+Wenn der Zusammenhang zwischen Objekt- und Bildpunkt bekannt ist, kann die Homographie über ein DLT berechnet werden. 
+
+Zur Bestimmung der Rotationsmatrix $R$ und $t$ muss die Homographie $H$ zerlegt werden. Da $R$ orthogonal ist, gilt $r_3 = r_1 \times r_2$ und demnach folgende Gleichung:
+\begin{equation}
+P=K
+\begin{bmatrix}
+r_{1} | r_{2} | (r_1 \times r_2)| t 
+\end{bmatrix}
+\end{equation} 
+
+Dadurch hat man alle Parameter, die die Informationen über die Kamera Pose bzw. Flugzeug Pose liefern. Es kann bei diesem Verfahren zu Abweichungen kommen, insbesondere, wenn die Kamera falsch kalibriert wurde.
+
+[\textit{Master-Arbeit: Entwicklung eines Augmented Reality
+Frameworks auf Basis von Kamera-basierten
+Trackingverfahren, Hendrik Brauer, 2010}]
+
 % siehe Ansatz zur Posenbestimmung: http://userpages.uni-koblenz.de/~cg/Diplomarbeiten/DA_BernhardReinert.pdf
 
 %-------Text-End------------------------------------------
