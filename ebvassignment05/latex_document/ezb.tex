@@ -59,11 +59,11 @@ void sobel (Mat_<uchar>& dstImg, const Mat_<uchar>& srcImg)
 	uchar *gpuSrcImg, *gpuDstImg;
 	
 	// allocate memory for the images
-	CHECK_CUDA(cudaMalloc((void**) &gpuSrcImg, size));
-	CHECK_CUDA(cudaMalloc((void**) &gpuDstImg, size));
+	cudaMalloc((void**) &gpuSrcImg, size);
+	cudaMalloc((void**) &gpuDstImg, size);
 	
 	// transfer the initialized source image to the device
-	CHECK_CUDA(cudaMemcpy(gpuSrcImg, srcImg.data, size, cudaMemcpyHostToDevice));
+	cudaMemcpy(gpuSrcImg, srcImg.data, size, cudaMemcpyHostToDevice);
 	
 	dim3 threads(16, 16);
 	dim3 blocks(round_up(dstImg.cols, threads.x), round_up(dstImg.rows, threads.y));
@@ -71,32 +71,42 @@ void sobel (Mat_<uchar>& dstImg, const Mat_<uchar>& srcImg)
 	sobelKernel<<<blocks, threads>>>(gpuDstImg, gpuSrcImg, srcImg.rows, srcImg.cols);
 	
 	// copy results back to the host (implies cudaDeviceSynchronize())
-	CHECK_CUDA(cudaMemcpy(dstImg.data, gpuDstImg, size, cudaMemcpyDeviceToHost));
+	cudaMemcpy(dstImg.data, gpuDstImg, size, cudaMemcpyDeviceToHost);
 	
 	// free the memory
-	CHECK_CUDA(cudaFree(gpuSrcImg));
-	CHECK_CUDA(cudaFree(gpuDstImg));
+	cudaFree(gpuSrcImg);
+	cudaFree(gpuDstImg);
 	
-	CHECK_CUDA(cudaDeviceReset());
+	cudaDeviceReset();
 }
 
 \end{lstlisting}
 \section{Schwarz und Weiß wir stehen an Eurer Seite}
-Zu beginn des Spieles und bei jeder Unterbrechung werden die Roboter auf der Seite, welche ihrer Mannschaft entspricht aufgestellt, wodurch die Zuordnung der Roboter zu den beiden Mannschaften erfolgt.\\
+Zu Beginn des Spieles und beim Anspiel nach einem Tor, werden die Roboter auf der Seite, welche ihrer Mannschaft entspricht, aufgestellt . Dadurch erfolgt die Zuordnung der Roboter zu der jeweiligen Mannschaft. Für den Algorithmus wird ein Partikelfilter eingesetzt, der vor allem dafür benutzt eine eindeutige Roboteridentifizierung zu ermöglichen.\\
 \linebreak
-\todo[inline]{was passiert bei (Freistoß,Anspiel nach einem Tor, Elfmeter, Faul, etc.) mit dem Filter?}
-Um jeden einzelnen Roboter zu verfolgen, wird für jeden Roboter ein unabhängiger Partikelfilter eingesetzt.
+Die Roboter müssen außerdem eine matte Oberfläche haben, damit Reflektionen vom Licht auf die schwarze Oberfläche der Roboter nicht als die weißen Kreise der Roboter identifiziert werden. Gleichermaßen empfiehlt es sich einen nicht reflektierenden Bodenbelag zu verwenden, so dass der Algorithmus nicht Reflektionen als Objekte erkennt.
+\subsection{Filterbeschreibung}
+Um jeden einzelnen Roboter zu verfolgen, wird für jeden Mannschafter einen unabhängigen Partikelfilter eingesetzt.
 Für diese Filter ist die reale Position, die Geschwindigkeit und deren Richtung als Vektor des Roboters und die Gewichtung des Zustandes der Zustandsraum. Die Dynamikfuntion bildet mit Hilfe des vorherigen Zustands und den Fahrkommandos jedes einzelnen Roboters als Vektor einen neuen Zustand. Die Messfunktion gewichtet die einzelnen Zustände (Partikel) im Zustandsraum, wofür die Position des Roboters im Bild herangezogen wird.\\
 \linebreak
-Hierbei gehen wir davon aus, dass äußere Einflüsse, z.B. Kontakt mit anderen Robotern, welche die Position des Roboters beeinflussen, so gering und zufällig sind, dass diese als Messrauschen nicht weiter beachtet werden müssen.\\
+Hierbei gehen wir davon aus, dass äußere Einflüsse, z.B. Kontakt mit anderen Robotern, welche die Position des Roboters beeinflussen, hinreichend gering und zufällig sind, dass diese als Messrauschen nicht weiter beachtet werden müssen.\\
 \linebreak
-Sollte es dazu kommen, dass ein Roboter nicht mehr im Bild erfasst werden können (z.B. umgekippt oder außerahlb des Spielfeldes), wird der Partikelfilter neu initialisiert, sobald der Roboter wieder erfasst wird. Dieses Vorgehen funktioniert nur, wenn nur ein Roboter zur Zeit nicht mehr erfassbar ist. Sobald mehr als ein Roboter nicht mehr erfassbar ist, ist es nicht mehr möglich diese zu unterscheiden, wenn sie wieder im Bild erfasst werden.\\
+Von dem Moment an, bei dem der Partikelfilter ein aussagekräftiges Ergebnis liefert, können die Mannschafter rückwirkend, identifiziert werden, in dem die Mannschaftsaufstellung dem Algorithmus mitgeteilt werden. Hierzu vergleicht er die Startposition auf der übermittelten Liste und seine berechnete Startposition. Alternativ kann die Identifizierung auch manuell vom Benutzer eingegeben werden, so ist die Roboteridentifikation von anfang an verfügbar.\\
 \linebreak
-Der Ball kann eindeutig von den Kreisen auf den Robotern unterschieden werden, da er nicht vor schwarzen Hintergrund liegt (hier nehmen wir an, dass die Spielfläche nicht schwarz ist). Mit diesen Voraussetzungen lässt sich der Ball genau wie die Billardkugel aus der Vorlesung verfolgen.\\
+Der Ball kann eindeutig von den Kreisen auf den Robotern unterschieden werden, da er nicht vor schwarzen Hintergrund liegt (hierfür gilt die Bedingung, dass die Spielfläche nicht schwarz ist). Mit diesen Voraussetzungen lässt sich der Ball genau wie die Billardkugel aus der Vorlesung verfolgen.\\
 \linebreak
-Über den Ball haben wir keine dynamischen Informationen, weshalb die Geschwindigkeit des Balls anhand der Positionen im Bild ermittelt wird, indem die zurückgelegte Strecken zwischen den Bildern berechnet wird. Nach einigen Einzelbildern können wir nun aus den Daten eine Dynamikfuntion herleiten, indem wir die Geschwindigkeit proportional zur Reibungskraft ändern.\\
+\subsection{Sonderfälle}
+Sollte es dazu kommen, dass ein Roboter nicht mehr im Bild erfasst werden kann (z.B. beim Umkippen oder er befindet sich außerhalb des Spielfeldes), wird der Partikelfilter neu initialisiert, sobald der Roboter wieder erfasst wird. Dieses Vorgehen funktioniert nur, wenn nur ein Roboter zu einer Zeit nicht mehr erfassbar ist. Sobald mehr als ein Roboter nicht mehr erfassbar sind, ist es nicht mehr möglich diese zu unterscheiden, wenn sie wieder im Bild erfasst werden, da es nun mehrere Möglichkeiten gibt, welcher Partikelfilter zu welchem Roboter gehört. In solchen Fällen kann dies manuell eingetragen werden.\\
 \linebreak
-Sollte der Ball nicht mehr im Bild zu erkennen sein, da er aus dem Bildbereich gefolgen ist oder sich direkt über einem Roboter befindet und nicht von der Markierung des Roboters unterschieden werden kann, wird der Partikelfilter neu initialisiert, sobald der ball wieder erfasst wurde. Dies ist ohne Weiteres möglich, da der Ball im Normalfall immer eindeutig identifiziert werden kann.
+\todo[inline]{wirklich??}
+Bei Spielunterbrechungen (z.B.: Foul, Roboter muss aufgerichtet werden, oder wenn generell ein Mensch das Spielfeld betritt, etc.)  wird hierfür jedes Mal der Filter zurückgesetzt, damit dieser nicht mit offensichtlich falschen Informationen arbeitet und falsche Werte berechnet. In solchen Fällen muss auch für jeden Partikelfilter der dazu korrespondierende Roboter manuell eingetragen werden, da sich die Roboter nun nicht mehr in ihrer Startposition befinden, die ihren Manschaften entspricht, sondern quer durcheinander stehen.
+\subsection{Ballerkennung}
+Über den Spielball erhaltet man keine gesonderten Informationen und kann daher die Position nur über eine Kreiserkennung (z.B.: mit Hough) der Bildaufnahmen erfassen. Der Ball unterscheidet sich von den Kreisen der Roboter in sofern, dass er sich nicht auf schwarzem Hintergrund befindet.\\
+\todo[inline]{ das kann doch eigentlich weg. man braucht die geschwindigkeit des balls doch gar nicht.. die würde man ja nur brauchen wenn man position anhand eines partikelfilters messen wollte, was wir aber nicht brauchen, weil wir kennen ja die richtige position schon}
+Theoretisch kann auch eine mittlere Geschwindigkeit des Balls, anhand zweier Bilder, durch die Bildrate und der Ballposition auf beiden Aufnahmen, errechnet werden (je nach Anwendung des Vision-Servers). Den Ball über einen Partikelfilter zu erfassen wird nicht empfohlen, da sich der Ball des öfteren \textit{sprunghaft} von einer Richtung, in eine völlig andere bewegt. Hierfür müsste der Filter bei jedem Richtungswechsel zurückgesetzt werden, um sinnvolle Ergebnisse zu erhalten, da der Wechsel beim Konter- oder Passspiel in relativ kurzer Zeit passiert.
+
+%Über den Ball haben wir keine dynamischen Informationen, weshalb die Geschwindigkeit des Balls anhand der Positionen im Bild ermittelt wird, indem die zurückgelegte Strecken zwischen den Bildern berechnet wird. Nach einigen Einzelbildern können wir nun aus den Daten eine Dynamikfuntion herleiten, indem wir die Geschwindigkeit proportional zur Reibungskraft ändern.\\
+%Sollte der Ball nicht mehr im Bild zu erkennen sein, da er aus dem Bildbereich gefolgen ist oder sich direkt über einem Roboter befindet und nicht von der Markierung des Roboters unterschieden werden kann, wird der Partikelfilter neu initialisiert, sobald der ball wieder erfasst wurde. Dies ist ohne Weiteres möglich, da der Ball im Normalfall immer eindeutig identifiziert werden kann.
 \section{Hinterm Horizont gehts weiter}
 Die Kamera nimmt von einem Flugzeug aus die Landebahn auf, wie es in Abbildung \ref{} dargestellt ist. Hierbei erkennt das Bildverarbeitungssystem zwei Geraden, die die Landebahn bilden und parallel zueinander liegen. Der Abstand zwischen den Geraden ist bekannt. Die Kamera hat einen schrägen Blickwinkel auf die Landebahn, da ansonsten keine Landebahn im Blickfeld der Kamera wäre. Es ist demnach ein Fluchtpunkt vorhanden, der sich ermitteln lässt, indem der Schnittpunkt der Geraden ermittelt wird. Ein Fluchtpunkt kann sich hierbei auch außerhalb des Bildes befinden. Es müssen lediglich die Geraden vorhanden sein.
 
