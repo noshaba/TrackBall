@@ -87,7 +87,7 @@ Zu Beginn des Spieles und beim Anspiel nach einem Tor, werden die Roboter auf de
 Die Roboter müssen außerdem eine matte Oberfläche haben, damit Reflektionen vom Licht auf die schwarze Oberfläche der Roboter nicht als die weißen Kreise der Roboter identifiziert werden. Gleichermaßen empfiehlt es sich einen nicht reflektierenden Bodenbelag zu verwenden, so dass der Algorithmus nicht Reflektionen als Objekte erkennt.
 \subsection{Filterbeschreibung}
 Um jeden einzelnen Roboter zu verfolgen, wird für jeden Mannschafter einen unabhängigen Partikelfilter eingesetzt.
-Für diese Filter ist die reale Position, die Geschwindigkeit und deren Richtung als Vektor des Roboters und die Gewichtung des Zustandes der Zustandsraum. Die Dynamikfuntion bildet mit Hilfe des vorherigen Zustands und den Fahrkommandos jedes einzelnen Roboters als Vektor einen neuen Zustand. Die Messfunktion gewichtet die einzelnen Zustände (Partikel) im Zustandsraum, wofür die Position des Roboters im Bild herangezogen wird.\\
+Für diese Filter ist die reale Position, die Geschwindigkeit und deren Richtung als Vektor des Roboters und die Gewichtung des Zustandes der Zustandsraum. Die Dynamikfuntion bildet mit Hilfe des vorherigen Zustands und den Fahrkommandos jedes einzelnen Roboters als Vektor einen neuen Zustand. Die Messfunktion gewichtet die einzelnen Zustände (Partikel) im Zustandsraum, wofür die Position des Roboters im Bild herangezogen wird. \\
 \linebreak
 Hierbei gehen wir davon aus, dass äußere Einflüsse, z.B. Kontakt mit anderen Robotern, welche die Position des Roboters beeinflussen, hinreichend gering und zufällig sind, dass diese als Messrauschen nicht weiter beachtet werden müssen.\\
 \linebreak
