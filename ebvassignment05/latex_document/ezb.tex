@@ -84,7 +84,7 @@ void sobel (Mat_<uchar>& dstImg, const Mat_<uchar>& srcImg)
 \section{Schwarz und Weiß wir stehen an Eurer Seite}
 Zu Beginn des Spieles und beim Anspiel nach einem Tor, werden die Roboter auf der Seite, welche ihrer Mannschaft entspricht, aufgestellt . Dadurch erfolgt die Zuordnung der Roboter zu der jeweiligen Mannschaft. Für den Algorithmus wird ein Partikelfilter eingesetzt, der vor allem dafür benutzt eine eindeutige Roboteridentifizierung zu ermöglichen.\\
 \linebreak
-Die Roboter müssen außerdem eine matte Oberfläche haben, damit Reflektionen vom Licht auf die schwarze Oberfläche der Roboter nicht als die weißen Kreise der Roboter identifiziert werden. Gleichermaßen empfiehlt es sich einen nicht reflektierenden Bodenbelag zu verwenden, so dass der Algorithmus nicht Reflektionen als Objekte erkennt.
+Die Roboter müssen eine matte Oberfläche haben, damit Reflektionen vom Licht auf die schwarze Oberfläche der nicht als die weißen Kreise der Roboter identifiziert werden. Gleichermaßen empfiehlt es sich einen nicht reflektierenden Bodenbelag zu verwenden, so dass der Algorithmus nicht Reflektionen als Objekte erkennt.
 \subsection{Filterbeschreibung}
 Um jeden einzelnen Roboter zu verfolgen, wird für jeden Mannschafter einen unabhängigen Partikelfilter eingesetzt.
 Für diese Filter ist die reale Position, die Geschwindigkeit und deren Richtung als Vektor des Roboters und die Gewichtung des Zustandes der Zustandsraum. Die Dynamikfuntion bildet mit Hilfe des vorherigen Zustands und den Fahrkommandos jedes einzelnen Roboters als Vektor einen neuen Zustand. Die Messfunktion gewichtet die einzelnen Zustände (Partikel) im Zustandsraum, wofür die Position des Roboters im Bild herangezogen wird. \\
@@ -93,14 +93,14 @@ Hierbei gehen wir davon aus, dass äußere Einflüsse, z.B. Kontakt mit anderen 
 \linebreak
 Von dem Moment an, bei dem der Partikelfilter ein aussagekräftiges Ergebnis liefert, können die Mannschafter rückwirkend, identifiziert werden, in dem die Mannschaftsaufstellung dem Algorithmus mitgeteilt werden. Hierzu vergleicht er die Startposition auf der übermittelten Liste und seine berechnete Startposition. Alternativ kann die Identifizierung auch manuell vom Benutzer eingegeben werden, so ist die Roboteridentifikation von anfang an verfügbar.\\
 \linebreak
-Der Ball kann eindeutig von den Kreisen auf den Robotern unterschieden werden, da er nicht vor schwarzen Hintergrund liegt (hierfür gilt die Bedingung, dass die Spielfläche nicht schwarz ist). Mit diesen Voraussetzungen lässt sich der Ball genau wie die Billardkugel aus der Vorlesung verfolgen.\\
+Der Ball kann eindeutig von den Kreisen auf den Robotern unterschieden werden, da er nicht vor schwarzen Hintergrund liegt (hierfür gilt die Bedingung, dass die Spielfläche nicht schwarz ist).\\
 \linebreak
 \subsection{Sonderfälle}
 Sollte es dazu kommen, dass ein Roboter nicht mehr im Bild erfasst werden kann (z.B. beim Umkippen oder er befindet sich außerhalb des Spielfeldes), wird der Partikelfilter neu initialisiert, sobald der Roboter wieder erfasst wird. Dieses Vorgehen funktioniert nur, wenn nur ein Roboter zu einer Zeit nicht mehr erfassbar ist. Sobald mehr als ein Roboter nicht mehr erfassbar sind, ist es nicht mehr möglich diese zu unterscheiden, wenn sie wieder im Bild erfasst werden, da es nun mehrere Möglichkeiten gibt, welcher Partikelfilter zu welchem Roboter gehört.\\
 \linebreak
-Bei Spielunterbrechungen (z.B.: Foul, Roboter muss aufgerichtet werden, oder wenn generell ein Mensch das Spielfeld betritt, etc.)  wird hierfür jedes Mal der Filter zurückgesetzt, damit dieser nicht mit offensichtlich falschen Informationen arbeitet und falsche Werte berechnet.\\
+Bei Spielunterbrechungen (z.B.: Foul, Roboter muss aufgerichtet werden, oder wenn generell ein Mensch das Spielfeld betritt, etc.)  wird hierfür die Aktualisierung des Filters solange angehalten, bis das Spiel fortgesetzt wird. Damit dieser nicht mit offensichtlich falschen Informationen arbeitet und falsche Werte berechnet.\\
 \linebreak
-Falls die genannten Positions- und Identifikationsmechanismen trotz allem falsche Werte liefern, bietet sich an den Benutzer für diesen Sonderfall eintragen zu lassen.
+Falls die genannten Positions- und Identifikationsmechanismen trotz allem falsche Werte liefern, bietet sich an den Benutzer für diesen Sonderfall eintragen zu lassen. Dies muss auch gemacht werden, wenn ein Filter zurückgesetzt wurde, da mitten im Spiel nicht mehr ohne weiteres die Roboter voneinander unterschieden werden können.
 \subsection{Ballerkennung}
 Über den Spielball erhaltet man keine gesonderten Informationen und kann daher die Position nur über eine Kreiserkennung (z.B.: mit Hough) der Bildaufnahmen erfassen. Der Ball unterscheidet sich von den Kreisen der Roboter in sofern, dass er sich nicht auf schwarzem Hintergrund befindet.\\
 \linebreak
