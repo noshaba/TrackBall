@@ -22,9 +22,20 @@
 
 %-------Text-Start------------------------------------------
 \section{Harte Kante auf der Grafikkarte}
+\begin{lstlisting}[language=C++]
+
+HoughCircle::Parameters::Parameters()
+ :rMin(10), rMax(15), sobelThreshold(7), houghThreshold(7), radiusHoughThreshold(0), localMaxRange(100)
+{
+	// so that findBestRadius and other functions do not have a buffer overflow
+	if (rMin < 0) rMin = 0;
+	if (rMax < 0) rMax = 0;
+}
+\end{lstlisting}
 \section{Schwarz und Weiß wir stehen an Eurer Seite}
-Zu beginn des Spieles werden die Roboter auf der Seite, welche ihrer Mannschaft entspricht aufgestellt, wodurch die Zuordnung der Roboter zu den beiden Mannschaften erfolgt.\\
+Zu beginn des Spieles und bei jeder Unterbrechung werden die Roboter auf der Seite, welche ihrer Mannschaft entspricht aufgestellt, wodurch die Zuordnung der Roboter zu den beiden Mannschaften erfolgt.\\
 \linebreak
+\todo[inline]{was passiert bei (Freistoß,Anspiel nach einem Tor, Elfmeter, Faul, etc.) mit dem Filter?}
 Um jeden einzelnen Roboter zu verfolgen, wird für jeden Roboter ein unabhängiger Partikelfilter eingesetzt.
 Für diese Filter ist die reale Position, die Geschwindigkeit und deren Richtung als Vektor des Roboters und die Gewichtung des Zustandes der Zustandsraum. Die Dynamikfuntion bildet mit Hilfe des vorherigen Zustands und den Fahrkommandos jedes einzelnen Roboters als Vektor einen neuen Zustand. Die Messfunktion gewichtet die einzelnen Zustände (Partikel) im Zustandsraum, wofür die Position des Roboters im Bild herangezogen wird.\\
 \linebreak
